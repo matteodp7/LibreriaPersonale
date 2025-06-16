@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<?import java.lang.Integer?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="it.libreriaPersonale.gui.LibroGUIController">
+
+    <top>
+        <VBox spacing="5">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <ToolBar>
+                <Button text="Aggiungi" onAction="#handleAggiungi"/>
+                <Button text="Modifica" onAction="#handleModifica"/>
+                <Button text="Elimina" onAction="#handleElimina"/>
+                <Button text="Importa da CSV" onAction="#handleImportaCSV" />
+                <Button fx:id="EsportaCsv" text="Esporta CSV" onAction="#handleEsportaCsv"/>
+            </ToolBar>
+
+            <!-- Filtro -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Titolo:"/>
+                <TextField fx:id="filterTitolo" promptText="Filtra per titolo"/>
+
+                <Label text="Autore:"/>
+                <TextField fx:id="filterAutore" promptText="Filtra per autore"/>
+
+                <Label text="Genere:"/>
+                <TextField fx:id="filterGenere" promptText="Filtra per genere"/>
+
+
+                <Label text="Stato:"/>
+                <ComboBox fx:id="filterStato">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Tutti"/>
+                            <!-- I valori dell’enum verranno caricati dinamicamente in controller -->
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+
+                <Label text="Valutazione ≥"/>
+                <ComboBox fx:id="filterValutazione">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <Integer fx:value="0"/>
+                            <Integer fx:value="1"/>
+                            <Integer fx:value="2"/>
+                            <Integer fx:value="3"/>
+                            <Integer fx:value="4"/>
+                            <Integer fx:value="5"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+
+                <Button text="Applica filtro" onAction="#handleApplicaFiltro"/>
+                <Button text="Reset filtri" onAction="#handleResetFiltri"/>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Ricerca:" />
+                <TextField fx:id="searchBar" promptText="Inserisci titolo, autore" />
+                <Button text="Cerca" onAction="#handleRicerca" />
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <TableView fx:id="tabellaLibri">
+            <columns>
+                <!-- Nuova colonna per la copertina -->
+                <TableColumn fx:id="colCopertina" text="Copertina" prefWidth="80"/>
+
+                <TableColumn fx:id="colTitolo" text="Titolo" prefWidth="200"/>
+                <TableColumn fx:id="colAutore" text="Autore" prefWidth="150"/>
+                <TableColumn fx:id="colonnaStato" text="Stato" prefWidth="100"/>
+                <TableColumn fx:id="colonnaGenere" text="Genere" prefWidth="100"/>
+                <TableColumn fx:id="colonnaValutazione" text="Valutazione" prefWidth="80"/>
+            </columns>
+        </TableView>
+    </center>
+
+</BorderPane>

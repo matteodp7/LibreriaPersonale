@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- JDBC driver e URL DB -->
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/libreriaPersonale</property>
+        <property name="hibernate.connection.username">postgres</property>
+        <property name="hibernate.connection.password">Matteo_7</property>
+
+        <!-- Dialect e pool -->
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.hikari.maximumPoolSize">10</property>
+
+        <!-- Log SQL -->
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+
+        <!-- Gestione schema -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+
+        <!-- Mapping della tua entity Libro (l’AttributeConverter verrà rilevato a runtime) -->
+        <mapping class="it.libreriaPersonale.model.Libro"/>
+    </session-factory>
+</hibernate-configuration>

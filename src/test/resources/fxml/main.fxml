@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="it.libreriaPersonale.controller.MainController" spacing="10" alignment="CENTER" xmlns="http://javafx.com/javafx">
+    <Label text="Benvenuto nella tua Libreria Personale!" />
+    <Button text="Visualizza libri" onAction="#onVisualizzaLibri" />
+    <Button text="Aggiungi libro" onAction="#onAggiungiLibro" />
+</VBox>

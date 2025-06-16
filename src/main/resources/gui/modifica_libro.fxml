@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      spacing="10" alignment="CENTER" padding="20"
+      fx:controller="it.libreriaPersonale.gui.ModificaLibroController">
+
+    <TextField fx:id="campoTitolo" promptText="Titolo"/>
+    <TextField fx:id="campoAutore" promptText="Autore"/>
+    <TextField fx:id="campoGenere" promptText="Genere"/>
+    <TextField fx:id="campoIsbn" promptText="ISBN"/>
+
+    <!-- Ora popolato dinamicamente dal controller -->
+    <ComboBox fx:id="comboStato"/>
+
+    <Spinner fx:id="spinnerValutazione" editable="true"/>
+
+    <!-- Nuovo campo per URL della copertina -->
+    <TextField fx:id="campoCopertinaUrl" promptText="URL Copertina"/>
+
+    <HBox spacing="10">
+        <Button text="Salva" onAction="#handleSalva"/>
+        <Button text="Annulla" onAction="#handleAnnulla"/>
+    </HBox>
+
+</VBox>
