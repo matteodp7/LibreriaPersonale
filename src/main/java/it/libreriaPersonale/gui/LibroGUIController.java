@@ -22,14 +22,11 @@ public class LibroGUIController {
 
     @FXML private TableView<Libro> tabellaLibri;
 
-    // Colonne esistenti:
     @FXML private TableColumn<Libro, String> colTitolo;
     @FXML private TableColumn<Libro, String> colAutore;
     @FXML private TableColumn<Libro, String> colonnaStato;
     @FXML private TableColumn<Libro, String> colonnaGenere;
     @FXML private TableColumn<Libro, Integer> colonnaValutazione;
-
-    // Nuova colonna per l’immagine di copertina (memorizza l’URL)
     @FXML private TableColumn<Libro, String> colCopertina;
 
     @FXML private TextField filterTitolo;
@@ -48,9 +45,6 @@ public class LibroGUIController {
     public void initialize() {
         controller = new LibroController();
         csvImporter = new CsvImporter(controller.getLibroDAO());
-
-
-        // Colonna Copertina (URL -> ImageView)
         colCopertina.setCellValueFactory(data -> {
             String url = data.getValue().getCopertinaUrl();
             return new ReadOnlyStringWrapper(url);
@@ -78,8 +72,6 @@ public class LibroGUIController {
                 }
             }
         });
-
-        // Colonne esistenti
         colTitolo.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getTitolo()));
         colAutore.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAutore()));
 
@@ -138,7 +130,6 @@ public class LibroGUIController {
 
         Spinner<Integer> valutazioneSpinner = new Spinner<>(0, 5, 0);
 
-        // Campo per l’URL della copertina
         TextField urlField = new TextField();
         urlField.setPromptText("URL copertina");
 
