@@ -10,7 +10,6 @@ public class CsvExporter {
 
     public static void esporta(List<Libro> libri, String filePath) {
         try (FileWriter writer = new FileWriter(filePath)) {
-            // Header CSV aggiornato con campo copertinaUrl
             writer.write("id,titolo,autore,genere,isbn,statolettura,valutazione,copertinaUrl\n");
             for (Libro libro : libri) {
                 writer.write(

@@ -1,6 +1,7 @@
 package it.libreriaPersonale;
 
 import it.libreriaPersonale.model.Libro;
+import it.libreriaPersonale.model.StatoLettura;
 import org.junit.jupiter.api.*;
 
 import jakarta.persistence.*;
@@ -40,7 +41,7 @@ public class LibroRepositoryTest {
 
     @Test
     void testPersistAndFindLibro() {
-        Libro libro = new Libro("1984", "Orwell", "Distopia", "1234567890", "Da leggere", 5);
+        Libro libro = new Libro("1984", "Orwell", "Distopia", "1234567890", StatoLettura.DA_LEGGERE, 5, "https://foto.jpg");
         em.persist(libro);
         em.flush(); // Forza l'inserimento nel DB
         em.clear(); // Svuota cache per simulare nuova richiesta
@@ -54,8 +55,8 @@ public class LibroRepositoryTest {
 
     @Test
     void testQueryAll() {
-        em.persist(new Libro("Libro 1", "Autore", "Genere", "ISBN1", "Da leggere", 4));
-        em.persist(new Libro("Libro 2", "Autore", "Genere", "ISBN2", "Letto", 3));
+        em.persist(new Libro("Libro 1", "Autore", "Genere", "ISBN1", StatoLettura.IN_LETTURA, 4,"https://foto.jpg"));
+        em.persist(new Libro("Libro 2", "Autore", "Genere", "ISBN2", StatoLettura.LETTO, 3,"https://foto.jpg"));
         em.flush();
 
         List<Libro> libri = em.createQuery("SELECT l FROM Libro l", Libro.class).getResultList();

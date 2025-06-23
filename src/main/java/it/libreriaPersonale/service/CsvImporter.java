@@ -19,7 +19,6 @@ public class CsvImporter {
 
     public void importaLibriDaCsv(String path) {
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            // Salta header
             String line = br.readLine();
 
             while ((line = br.readLine()) != null) {
@@ -50,7 +49,7 @@ public class CsvImporter {
 
                 libro.setValutazione(Integer.parseInt(campi[6].trim()));
 
-                // Nuovo campo copertinaUrl (campo 7)
+
                 if (campi.length > 7) {
                     libro.setCopertinaUrl(campi[7].trim());
                 } else {

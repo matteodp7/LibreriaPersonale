@@ -11,8 +11,6 @@ public interface LibroDAO {
     void salva(Libro libro);
     void aggiorna(Libro libro);
     void elimina(Libro libro);
-
-    // Ora accettano l’enum StatoLettura
     boolean esistePerIsbn(String isbn);
     List<Libro> trovaOrdinatiPerAutore();
     List<Libro> cercaPerTitoloOAutore(String query);

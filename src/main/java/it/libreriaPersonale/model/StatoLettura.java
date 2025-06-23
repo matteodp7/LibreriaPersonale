@@ -16,7 +16,6 @@ public enum StatoLettura {
         return label;
     }
 
-    // Metodo opzionale se vuoi ricavare l'enum dalla stringa (utile in deserializzazione, ecc.)
     public static StatoLettura fromLabel(String label) {
         for (StatoLettura stato : values()) {
             if (stato.label.equalsIgnoreCase(label)) {

@@ -2,6 +2,7 @@ package it.libreriaPersonale;
 
 import it.libreriaPersonale.model.Libro;
 import it.libreriaPersonale.dao.LibroDAO;
+import it.libreriaPersonale.model.StatoLettura;
 import it.libreriaPersonale.service.LibroService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ public class LibroServiceTest {
 
     @Test
     void testAggiungiLibro_conIsbnDuplicato() {
-        Libro libro = new Libro("Titolo", "Autore", "Genere", "ISBN123", "Letto", 5);
+        Libro libro = new Libro("Titolo", "Autore", "Genere", "ISBN123", StatoLettura.LETTO, 5, "https://foto.jpg");
 
         // Simula che esiste già un libro con questo ISBN
         when(mockDAO.esistePerIsbn("ISBN123")).thenReturn(true);
@@ -36,7 +37,7 @@ public class LibroServiceTest {
 
     @Test
     void testAggiungiLibro_successo() {
-        Libro libro = new Libro("Titolo", "Autore", "Genere", "ISBN123", "Letto", 5);
+        Libro libro = new Libro("Titolo", "Autore", "Genere", "ISBN123", StatoLettura.LETTO, 5, "https://foto.jpg");
 
         when(mockDAO.esistePerIsbn("ISBN123")).thenReturn(false);
 

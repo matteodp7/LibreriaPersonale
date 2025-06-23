@@ -17,7 +17,6 @@ public class MainApp extends Application {
         Parent root = loader.load();  // carica il FXML una volta sola
         Scene scene = new Scene(root, 600, 400);  // usa root qui
 
-        // **Aggiungi questa riga per caricare il CSS**
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
         Image icon = new Image(getClass().getResourceAsStream("/img/icon.png"));
