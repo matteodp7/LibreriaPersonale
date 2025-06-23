@@ -22,11 +22,10 @@ public class JpaTest {
             Libro libro = new Libro();
             libro.setTitolo("Il nome della rosa");
             libro.setAutore("Umberto Eco");
-            libro.setValutazione(5);
-            // Usa l'enum StatoLettura invece della stringa
+            libro.setGenere("Romanzo");
+            libro.setValutazione(3);
             libro.setStatoLettura(StatoLettura.IN_LETTURA);
-            // Imposta anche l'URL della copertina:
-            libro.setCopertinaUrl("https://esempio.com/copertina_nome_della_rosa.jpg");
+            libro.setCopertinaUrl("https://m.media-amazon.com/images/I/61Aa9Yic8AL._UF1000,1000_QL80_.jpg");
 
             em.persist(libro);
 
