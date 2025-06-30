@@ -1,0 +1,65 @@
+[
+  {
+    "titolo": "Il secondo tragico libro di Fantozzi",
+    "autore": "Paolo Villaggio",
+    "genere": "Romanzo",
+    "isbn": "9-75443-6533-34",
+    "statolettura": "DA_LEGGERE",
+    "valutazione": 3,
+    "copertinaUrl": "https://m.media-amazon.com/images/I/91fN61KPf7L._AC_UF1000,1000_QL80_.jpg"
+  },
+  {
+    "titolo": "L\u0027uomo sbagliato - Il caso Barillà",
+    "autore": "Stefano Zurlo",
+    "genere": "Giornalistico",
+    "isbn": "9-335-7976-22",
+    "statolettura": "LETTO",
+    "valutazione": 2,
+    "copertinaUrl": "https://www.ibs.it/images/9788839713643_0_0_0_0_0.jpg"
+  },
+  {
+    "titolo": "Harry Potter e la Camera dei Segreti",
+    "autore": "J.K. Rowling",
+    "genere": "Fantasy",
+    "isbn": "9-4536-732-33",
+    "statolettura": "LETTO",
+    "valutazione": 4,
+    "copertinaUrl": "https://www.salani.it/libri/harry-potter-e-la-camera-dei-segreti-9788867155965/image_preview"
+  },
+  {
+    "titolo": "Harry Potter e la Pietra Filosofale",
+    "autore": "J.K. Rowling",
+    "genere": "Fantasy",
+    "isbn": "9-85424-754-7",
+    "statolettura": "LETTO",
+    "valutazione": 4,
+    "copertinaUrl": "https://www.lafeltrinelli.it/images/9788867158126_0_0_536_0_75.jpg"
+  },
+  {
+    "titolo": "Le Tigri di Mompracem",
+    "autore": "Emilio Salgari",
+    "genere": "Avventura",
+    "isbn": "9-4432-5257-34",
+    "statolettura": "DA_LEGGERE",
+    "valutazione": 4,
+    "copertinaUrl": "https://upload.wikimedia.org/wikipedia/commons/5/53/Tigri_1900.jpg"
+  },
+  {
+    "titolo": "Fantozzi ",
+    "autore": "Paolo Villaggio",
+    "genere": "Romanzo",
+    "isbn": "9-8654-6558-88",
+    "statolettura": "IN_LETTURA",
+    "valutazione": 4,
+    "copertinaUrl": "https://m.media-amazon.com/images/I/91cUeVjjvhL._AC_UF1000,1000_QL80_.jpg"
+  },
+  {
+    "titolo": "L\u0027amica americana",
+    "autore": "Margherita Oggero",
+    "genere": "Giallo",
+    "isbn": "9-3435-856-22",
+    "statolettura": "IN_LETTURA",
+    "valutazione": 5,
+    "copertinaUrl": "https://www.ibs.it/images/9788804553816_0_0_0_0_0.jpg"
+  }
+]

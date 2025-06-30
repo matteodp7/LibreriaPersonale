@@ -29,7 +29,7 @@ public class HibernateUtil {
             // Crea la SessionFactory
             sessionFactory = configuration.buildSessionFactory(serviceRegistry);
         } catch (Throwable ex) {
-            System.err.println("⚠️ Errore nella creazione della SessionFactory: " + ex);
+            System.err.println(" Errore nella creazione della SessionFactory: " + ex);
             throw new ExceptionInInitializerError(ex);
         }
     }

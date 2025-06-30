@@ -1,12 +1,11 @@
 package it.libreriaPersonale;
 
 import it.libreriaPersonale.controller.LibroController;
-import it.libreriaPersonale.dao.LibroDAOImpl;
 import it.libreriaPersonale.model.Libro;
 import it.libreriaPersonale.model.StatoLettura;
 import it.libreriaPersonale.repository.LibroRepository;
-import it.libreriaPersonale.service.CsvImporter;
-import it.libreriaPersonale.service.CsvExporter;
+import it.libreriaPersonale.service.CSVImporter;
+import it.libreriaPersonale.service.CSVExporter;
 
 import java.util.List;
 import java.util.Scanner;
@@ -17,7 +16,7 @@ public class EsempioMain {
         LibroController controller = new LibroController();
 
         // Creiamo CsvImporter passando il repository usato da LibroService/LibroController
-        CsvImporter importer = new CsvImporter(new LibroDAOImpl());
+        CSVImporter importer = new CSVImporter(new LibroRepository());
 
         // Importiamo i libri da CSV (evita duplicati basandosi sull'ISBN)
         importer.importaLibriDaCsv("libri.csv"); // Assicurati che 'libri.csv' sia nel path giusto
@@ -279,7 +278,7 @@ public class EsempioMain {
                 case "0":
                     // ✅ Salva in CSV prima di uscire
                     List<Libro> tuttiLibri = controller.gestisciElencoLibri();
-                    CsvExporter.esporta(tuttiLibri, "libri.csv");
+                    CSVExporter.esporta(tuttiLibri, "libri.csv");
                     continua = false;
                     break;
 

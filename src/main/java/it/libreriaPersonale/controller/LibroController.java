@@ -1,9 +1,9 @@
 package it.libreriaPersonale.controller;
 
-import it.libreriaPersonale.dao.LibroDAO;
-import it.libreriaPersonale.dao.LibroDAOImpl;
+
 import it.libreriaPersonale.model.Libro;
 import it.libreriaPersonale.model.StatoLettura;
+import it.libreriaPersonale.repository.LibroRepository;
 import it.libreriaPersonale.service.LibroService;
 
 import java.util.List;
@@ -13,12 +13,12 @@ public class LibroController {
     private final LibroService service;
 
     public LibroController() {
-        LibroDAO libroDAO = new LibroDAOImpl();
-        this.service = new LibroService(libroDAO);
+        LibroRepository libroRepo = new LibroRepository();
+        this.service = new LibroService(libroRepo);
     }
 
-    public LibroDAO getLibroDAO() {
-        return service.getLibroDAO();
+    public LibroRepository getLibroRepository() {
+        return service.getLibro();
     }
 
 
@@ -35,7 +35,7 @@ public class LibroController {
 
     public void gestisciEliminazioneLibro(Long id) {
         service.eliminaLibro(id);
-        System.out.println("🗑 Libro eliminato (se esiste).");
+        System.out.println(" Libro eliminato (se esiste).");
     }
 
     public List<Libro> gestisciLibriOrdinatiPerAutore() {
@@ -44,7 +44,7 @@ public class LibroController {
 
     public void gestisciAggiornamentoLibro(Libro libro) {
         service.aggiornaLibro(libro);
-        System.out.println("✏️ Libro aggiornato con successo!");
+        System.out.println(" Libro aggiornato con successo!");
     }
 
     public List<Libro> gestisciRicerca(String query) {

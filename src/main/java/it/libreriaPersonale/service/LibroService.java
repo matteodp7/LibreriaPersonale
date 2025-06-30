@@ -1,68 +1,69 @@
 package it.libreriaPersonale.service;
 
-import it.libreriaPersonale.dao.LibroDAO;
+import it.libreriaPersonale.repository.LibroRepository;
 import it.libreriaPersonale.model.Libro;
 import it.libreriaPersonale.model.StatoLettura;
+import it.libreriaPersonale.repository.LibroRepository;
 
 import java.util.List;
 
 public class LibroService {
 
-    private final LibroDAO libroDAO;
+    private final LibroRepository libroRepository;
 
-    public LibroService(LibroDAO libroDAO) {
-        this.libroDAO = libroDAO;
+    public LibroService(LibroRepository lr) {
+        this.libroRepository = lr;
     }
 
-    public LibroDAO getLibroDAO() {
-        return libroDAO;
+    public LibroRepository getLibro() {
+        return libroRepository;
     }
 
 
     public boolean aggiungiLibro(Libro libro) {
-        if (libroDAO.esistePerIsbn(libro.getIsbn())) {
-            System.out.println("❌ Esiste già un libro con questo ISBN.");
+        if (libroRepository.esistePerIsbn(libro.getIsbn())) {
+            System.out.println(" Esiste già un libro con questo ISBN.");
             return false;
         }
-        libroDAO.salva(libro);
+        libroRepository.salva(libro);
         return true;
     }
 
     public List<Libro> getLibri() {
-        return libroDAO.trovaTutti();
+        return libroRepository.trovaTutti();
     }
 
     public void eliminaLibro(Long id) {
-        Libro libro = libroDAO.trovaPerId(Math.toIntExact(id));
+        Libro libro = libroRepository.trovaPerId(id);
         if (libro != null) {
-            libroDAO.elimina(libro);
+            libroRepository.elimina(libro);
         }
     }
 
     public List<Libro> getLibriOrdinatiPerAutore() {
-        return libroDAO.trovaOrdinatiPerAutore();
+        return libroRepository.trovaOrdinatiPerAutore();
     }
 
     public void aggiornaLibro(Libro libro) {
-        libroDAO.aggiorna(libro);
+        libroRepository.aggiorna(libro);
     }
 
     public List<Libro> cercaLibri(String query) {
-        return libroDAO.cercaPerTitoloOAutore(query);
+        return libroRepository.cercaPerTitoloOAutore(query);
     }
 
     /**
      * Filtra i libri per stato di lettura (enum).
      */
     public List<Libro> filtraPerStato(StatoLettura stato) {
-        return libroDAO.filtraPerStato(stato);
+        return libroRepository.filtraPerStato(stato);
     }
 
     public List<Libro> filtraPerValutazioneMinima(int valutazioneMinima) {
-        return libroDAO.filtraPerValutazioneMinima(valutazioneMinima);
+        return libroRepository.filtraPerValutazioneMinima(valutazioneMinima);
     }
 
     public void chiudi() {
-        libroDAO.chiudi();
+        libroRepository.chiudi();
     }
 }

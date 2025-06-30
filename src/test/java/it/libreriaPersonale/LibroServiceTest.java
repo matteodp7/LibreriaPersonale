@@ -3,6 +3,7 @@ package it.libreriaPersonale;
 import it.libreriaPersonale.model.Libro;
 import it.libreriaPersonale.dao.LibroDAO;
 import it.libreriaPersonale.model.StatoLettura;
+import it.libreriaPersonale.repository.LibroRepository;
 import it.libreriaPersonale.service.LibroService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,13 +14,13 @@ import static org.mockito.Mockito.*;
 
 public class LibroServiceTest {
 
-    private LibroDAO mockDAO;
+    private LibroRepository mockRepo;
     private LibroService service;
 
     @BeforeEach
     void setUp() {
-        mockDAO = Mockito.mock(LibroDAO.class);
-        service = new LibroService(mockDAO);
+        mockRepo = Mockito.mock(LibroRepository.class);
+        service = new LibroService(mockRepo);
     }
 
     @Test
@@ -27,23 +28,23 @@ public class LibroServiceTest {
         Libro libro = new Libro("Titolo", "Autore", "Genere", "ISBN123", StatoLettura.LETTO, 5, "https://foto.jpg");
 
         // Simula che esiste già un libro con questo ISBN
-        when(mockDAO.esistePerIsbn("ISBN123")).thenReturn(true);
+        when(mockRepo.esistePerIsbn("ISBN123")).thenReturn(true);
 
         boolean risultato = service.aggiungiLibro(libro);
 
         assertFalse(risultato);
-        verify(mockDAO, never()).salva(any());
+        verify(mockRepo, never()).salva(any());
     }
 
     @Test
     void testAggiungiLibro_successo() {
         Libro libro = new Libro("Titolo", "Autore", "Genere", "ISBN123", StatoLettura.LETTO, 5, "https://foto.jpg");
 
-        when(mockDAO.esistePerIsbn("ISBN123")).thenReturn(false);
+        when(mockRepo.esistePerIsbn("ISBN123")).thenReturn(false);
 
         boolean risultato = service.aggiungiLibro(libro);
 
         assertTrue(risultato);
-        verify(mockDAO).salva(libro);
+        verify(mockRepo).salva(libro);
     }
 }

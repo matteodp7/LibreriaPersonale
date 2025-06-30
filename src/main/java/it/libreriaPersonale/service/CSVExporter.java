@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-public class CsvExporter {
+public class CSVExporter {
 
     public static void esporta(List<Libro> libri, String filePath) {
         try (FileWriter writer = new FileWriter(filePath)) {
@@ -23,9 +23,9 @@ public class CsvExporter {
                                 escape(libro.getCopertinaUrl()) + "\n"
                 );
             }
-            System.out.println("💾 Libri salvati in: " + filePath);
+            System.out.println(" Libri salvati in: " + filePath);
         } catch (IOException e) {
-            System.err.println("❌ Errore durante il salvataggio del file CSV: " + e.getMessage());
+            System.err.println(" Errore durante il salvataggio del file CSV: " + e.getMessage());
         }
     }
 

@@ -1,6 +1,8 @@
 package it.libreriaPersonale.gui;
 
+import it.libreriaPersonale.builder.ConcreteBuilder;
 import it.libreriaPersonale.controller.LibroController;
+import it.libreriaPersonale.dto.LibroDTO;
 import it.libreriaPersonale.model.Libro;
 import it.libreriaPersonale.model.StatoLettura;
 import javafx.collections.FXCollections;
@@ -16,7 +18,7 @@ public class ModificaLibroController {
     @FXML private TextField campoIsbn;
     @FXML private ComboBox<StatoLettura> comboStato;
     @FXML private Spinner<Integer> spinnerValutazione;
-    @FXML private TextField campoCopertinaUrl; // nuovo campo per URL copertina
+    @FXML private TextField campoCopertinaUrl;
 
     private final LibroController controller = new LibroController();
     private Libro libroDaModificare;
@@ -32,31 +34,37 @@ public class ModificaLibroController {
         campoCopertinaUrl.setText(libro.getCopertinaUrl());
     }
 
-    @FXML
-    public void initialize() {
-        // Popolo il ComboBox con i valori dell'enum
+    @FXML public void initialize() {
         comboStato.setItems(FXCollections.observableArrayList(StatoLettura.values()));
-        comboStato.getSelectionModel().selectFirst(); // Default: DA_LEGGERE
-
-        spinnerValutazione.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 5, 3));
+        comboStato.getSelectionModel().selectFirst();
+        spinnerValutazione.setValueFactory(
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1,5,3)
+        );
     }
 
-    @FXML
-    private void handleSalva() {
-        libroDaModificare.setTitolo(campoTitolo.getText());
-        libroDaModificare.setAutore(campoAutore.getText());
-        libroDaModificare.setGenere(campoGenere.getText());
-        libroDaModificare.setIsbn(campoIsbn.getText());
-        libroDaModificare.setStatoLettura(comboStato.getValue());
-        libroDaModificare.setValutazione(spinnerValutazione.getValue());
-        libroDaModificare.setCopertinaUrl(campoCopertinaUrl.getText().trim().isEmpty() ? null : campoCopertinaUrl.getText().trim());
+    @FXML private void handleSalva() {
+        System.err.println("[Controller] handleSalva() modifica invoked");
+
+        // Aggiorna usando ConcreteBuilder sul libro esistente
+        ConcreteBuilder builder = new ConcreteBuilder(libroDaModificare);
+        builder
+                .setTitolo(campoTitolo.getText())
+                .setAutore(campoAutore.getText())
+                .setGenere(campoGenere.getText())
+                .setIsbn(campoIsbn.getText())
+                .setStatoLettura(comboStato.getValue())
+                .setValutazione(spinnerValutazione.getValue())
+                .setCopertinaUrl(
+                        campoCopertinaUrl.getText().trim().isEmpty() ? null
+                                : campoCopertinaUrl.getText().trim()
+                )
+                .build();
 
         controller.gestisciAggiornamentoLibro(libroDaModificare);
         chiudiFinestra();
     }
 
-    @FXML
-    private void handleAnnulla() {
+    @FXML private void handleAnnulla() {
         chiudiFinestra();
     }
 

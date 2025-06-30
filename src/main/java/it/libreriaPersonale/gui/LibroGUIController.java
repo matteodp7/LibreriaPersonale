@@ -1,27 +1,31 @@
 package it.libreriaPersonale.gui;
 
+import it.libreriaPersonale.builder.ConcreteBuilder;
+import it.libreriaPersonale.builder.DirectorLibro;
 import it.libreriaPersonale.controller.LibroController;
 import it.libreriaPersonale.model.Libro;
 import it.libreriaPersonale.model.StatoLettura;
-import it.libreriaPersonale.service.CsvExporter;
-import it.libreriaPersonale.service.CsvImporter;
+import it.libreriaPersonale.repository.LibroRepository;
+import it.libreriaPersonale.service.*;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class LibroGUIController {
 
     @FXML private TableView<Libro> tabellaLibri;
-
     @FXML private TableColumn<Libro, String> colTitolo;
     @FXML private TableColumn<Libro, String> colAutore;
     @FXML private TableColumn<Libro, String> colonnaStato;
@@ -38,17 +42,31 @@ public class LibroGUIController {
 
     private ObservableList<Libro> libriList;
     private LibroController controller;
-    private CsvImporter csvImporter;
-
+    private LibroService service;
+    private LibroRepository repository;
+    private CSVImporter csvImporter;
+    private JSONImporter jsonImporter;
 
     @FXML
     public void initialize() {
-        controller = new LibroController();
-        csvImporter = new CsvImporter(controller.getLibroDAO());
-        colCopertina.setCellValueFactory(data -> {
-            String url = data.getValue().getCopertinaUrl();
-            return new ReadOnlyStringWrapper(url);
-        });
+        controller    = new LibroController();
+        service = new LibroService(repository);
+        repository= new LibroRepository();
+        csvImporter   = new CSVImporter(controller.getLibroRepository());
+        jsonImporter   = new JSONImporter(service, repository);
+
+        // Colonne tabella
+        colTitolo.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getTitolo()));
+        colAutore.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAutore()));
+        colonnaGenere.setCellValueFactory(new PropertyValueFactory<>("genere"));
+        colonnaValutazione.setCellValueFactory(new PropertyValueFactory<>("valutazione"));
+        colonnaStato.setCellValueFactory(data ->
+                new ReadOnlyStringWrapper(data.getValue().getStatoLettura().toString())
+        );
+
+        colCopertina.setCellValueFactory(data ->
+                new ReadOnlyStringWrapper(data.getValue().getCopertinaUrl())
+        );
         colCopertina.setCellFactory(col -> new TableCell<>() {
             private final ImageView imageView = new ImageView();
             {
@@ -56,15 +74,13 @@ public class LibroGUIController {
                 imageView.setFitHeight(80);
                 imageView.setPreserveRatio(true);
             }
-            @Override
             protected void updateItem(String url, boolean empty) {
                 super.updateItem(url, empty);
                 if (empty || url == null || url.isBlank()) {
                     setGraphic(null);
                 } else {
                     try {
-                        Image img = new Image(url, true);
-                        imageView.setImage(img);
+                        imageView.setImage(new Image(url, true));
                         setGraphic(imageView);
                     } catch (Exception e) {
                         setGraphic(null);
@@ -72,210 +88,150 @@ public class LibroGUIController {
                 }
             }
         });
-        colTitolo.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getTitolo()));
-        colAutore.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAutore()));
 
-        colonnaStato.setCellValueFactory(data -> {
-            StatoLettura stato = data.getValue().getStatoLettura();
-            String statoLeggibile = switch (stato) {
-                case DA_LEGGERE -> "Da leggere";
-                case IN_LETTURA -> "In lettura";
-                case LETTO -> "Letto";
-            };
-            return new ReadOnlyStringWrapper(statoLeggibile);
-        });
-
-        colonnaGenere.setCellValueFactory(new PropertyValueFactory<>("genere"));
-        colonnaValutazione.setCellValueFactory(new PropertyValueFactory<>("valutazione"));
-
-        // Carico dati iniziali
+        // Carico dati
         libriList = FXCollections.observableArrayList(controller.gestisciElencoLibri());
         tabellaLibri.setItems(libriList);
 
+        // Inizializza filtri
+        filterTitolo.clear();
+        filterAutore.clear();
+        filterGenere.clear();
+
+        filterStato.setItems(FXCollections.observableArrayList("Tutti"));
+        for (StatoLettura s: StatoLettura.values()) {
+            filterStato.getItems().add(s.toString());
+        }
         filterStato.getSelectionModel().selectFirst();
-        for (StatoLettura stato : StatoLettura.values()) {
-            filterStato.getItems().add(stato.toString()); // usa il label leggibile
-        }
 
-
-
-        filterValutazione.setItems(FXCollections.observableArrayList(0, 1, 2, 3, 4, 5));
+        filterValutazione.setItems(FXCollections.observableArrayList(0,1,2,3,4,5));
         filterValutazione.getSelectionModel().select(0);
-    }
-
-    private List<String> buildStatoList() {
-        List<String> stati =
-                new java.util.ArrayList<>(FXCollections.observableArrayList("Tutti").stream().toList());
-        for (StatoLettura s : StatoLettura.values()) {
-            stati.add(s.name());
-        }
-        return stati;
     }
 
     @FXML
     private void handleAggiungi() {
         Dialog<Libro> dialog = new Dialog<>();
         dialog.setTitle("Aggiungi Nuovo Libro");
+        ButtonType btnAggiungi = new ButtonType("Aggiungi", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().setAll(btnAggiungi, ButtonType.CANCEL);
 
-        ButtonType aggiungiButtonType = new ButtonType("Aggiungi", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(aggiungiButtonType, ButtonType.CANCEL);
+        // Campi dialog
+        TextField titoloF = new TextField();
+        TextField autoreF = new TextField();
+        TextField genereF = new TextField();
+        TextField isbnF   = new TextField();
+        ComboBox<StatoLettura> statoC = new ComboBox<>(FXCollections.observableArrayList(StatoLettura.values()));
+        statoC.setValue(StatoLettura.DA_LEGGERE);
+        Spinner<Integer> valSpinner = new Spinner<>(0,5,0);
+        TextField urlF = new TextField();
+        urlF.setPromptText("URL Copertina");
 
-        TextField titoloField = new TextField();
-        TextField autoreField = new TextField();
-        TextField genereField = new TextField();
-        TextField isbnField = new TextField();
-
-        ComboBox<StatoLettura> statoCombo = new ComboBox<>(FXCollections.observableArrayList(StatoLettura.values()));
-        statoCombo.setValue(StatoLettura.DA_LEGGERE);
-
-        Spinner<Integer> valutazioneSpinner = new Spinner<>(0, 5, 0);
-
-        TextField urlField = new TextField();
-        urlField.setPromptText("URL copertina");
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-
-        grid.add(new Label("Titolo:"), 0, 0);
-        grid.add(titoloField, 1, 0);
-        grid.add(new Label("Autore:"), 0, 1);
-        grid.add(autoreField, 1, 1);
-        grid.add(new Label("Genere:"), 0, 2);
-        grid.add(genereField, 1, 2);
-        grid.add(new Label("ISBN:"), 0, 3);
-        grid.add(isbnField, 1, 3);
-        grid.add(new Label("Stato Lettura:"), 0, 4);
-        grid.add(statoCombo, 1, 4);
-        grid.add(new Label("Valutazione:"), 0, 5);
-        grid.add(valutazioneSpinner, 1, 5);
-        grid.add(new Label("URL Copertina:"), 0, 6);
-        grid.add(urlField, 1, 6);
-
+        GridPane grid = new GridPane(); grid.setHgap(10); grid.setVgap(10);
+        grid.add(new Label("Titolo:"),0,0);       grid.add(titoloF,1,0);
+        grid.add(new Label("Autore:"),0,1);      grid.add(autoreF,1,1);
+        grid.add(new Label("Genere:"),0,2);      grid.add(genereF,1,2);
+        grid.add(new Label("ISBN:"),0,3);        grid.add(isbnF,1,3);
+        grid.add(new Label("Stato Lettura:"),0,4);grid.add(statoC,1,4);
+        grid.add(new Label("Valutazione:"),0,5); grid.add(valSpinner,1,5);
+        grid.add(new Label("URL Copertina:"),0,6);grid.add(urlF,1,6);
         dialog.getDialogPane().setContent(grid);
 
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == aggiungiButtonType) {
-                return new Libro(
-                        titoloField.getText(),
-                        autoreField.getText(),
-                        genereField.getText(),
-                        isbnField.getText(),
-                        statoCombo.getValue(),
-                        valutazioneSpinner.getValue(),
-                        urlField.getText().trim()
+        dialog.setResultConverter(b -> {
+            if (b == btnAggiungi) {
+                ConcreteBuilder builder = new ConcreteBuilder();
+                DirectorLibro director = new DirectorLibro(builder);
+                String url = urlF.getText().trim().isEmpty() ? null : urlF.getText().trim();
+                return director.costruisciLibroCompleto(
+                        titoloF.getText(),
+                        autoreF.getText(),
+                        genereF.getText(),
+                        isbnF.getText(),
+                        statoC.getValue(),
+                        valSpinner.getValue(),
+                        url
                 );
             }
             return null;
         });
 
-        boolean aggiuntoConSuccesso = false;
-        while (!aggiuntoConSuccesso) {
-            var risultato = dialog.showAndWait();
-            if (risultato.isEmpty()) {
-                break; // utente ha cliccato “Annulla”
-            }
-            Libro nuovoLibro = risultato.get();
-
-            if (controller.gestisciAggiuntaLibro(nuovoLibro)) {
+        boolean success = false;
+        while (!success) {
+            var res = dialog.showAndWait();
+            if (res.isEmpty()) break;
+            Libro l = res.get();
+            if (controller.gestisciAggiuntaLibro(l)) {
                 libriList.setAll(controller.gestisciElencoLibri());
-                mostraAlertInfo("✅ Libro aggiunto con successo!");
-                aggiuntoConSuccesso = true;
+                mostraAlertInfo(" Libro aggiunto con successo!");
+                success = true;
             } else {
-                mostraAlertWarning("❌ Esiste già un libro con questo ISBN. Modifica l'ISBN e riprova.");
-                // Ripristino i dati nel dialog
-                titoloField.setText(nuovoLibro.getTitolo());
-                autoreField.setText(nuovoLibro.getAutore());
-                genereField.setText(nuovoLibro.getGenere());
-                isbnField.setText(nuovoLibro.getIsbn());
-                statoCombo.setValue(nuovoLibro.getStatoLettura());
-                valutazioneSpinner.getValueFactory().setValue(nuovoLibro.getValutazione());
-                urlField.setText(nuovoLibro.getCopertinaUrl());
+                mostraAlertWarning(" ISBN duplicato, riprova.");
             }
         }
     }
 
     @FXML
     private void handleModifica() {
-        Libro libroSelezionato = tabellaLibri.getSelectionModel().getSelectedItem();
-        if (libroSelezionato != null) {
-            Dialog<Void> dialog = new Dialog<>();
-            dialog.setTitle("Modifica Libro");
-
-            ButtonType okButtonType = new ButtonType("Salva", ButtonBar.ButtonData.OK_DONE);
-            dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
-
-            TextField titoloField = new TextField(libroSelezionato.getTitolo());
-            TextField autoreField = new TextField(libroSelezionato.getAutore());
-            TextField genereField = new TextField(libroSelezionato.getGenere());
-            TextField isbnField = new TextField(libroSelezionato.getIsbn());
-
-            ComboBox<StatoLettura> statoCombo = new ComboBox<>(FXCollections.observableArrayList(StatoLettura.values()));
-            statoCombo.setValue(libroSelezionato.getStatoLettura());
-
-            Spinner<Integer> valutazioneSpinner = new Spinner<>(0, 5, libroSelezionato.getValutazione());
-
-            TextField urlField = new TextField(libroSelezionato.getCopertinaUrl());
-
-            GridPane grid = new GridPane();
-            grid.setHgap(10);
-            grid.setVgap(10);
-
-            grid.add(new Label("Titolo:"), 0, 0);
-            grid.add(titoloField, 1, 0);
-            grid.add(new Label("Autore:"), 0, 1);
-            grid.add(autoreField, 1, 1);
-            grid.add(new Label("Genere:"), 0, 2);
-            grid.add(genereField, 1, 2);
-            grid.add(new Label("ISBN:"), 0, 3);
-            grid.add(isbnField, 1, 3);
-            grid.add(new Label("Stato Lettura:"), 0, 4);
-            grid.add(statoCombo, 1, 4);
-            grid.add(new Label("Valutazione:"), 0, 5);
-            grid.add(valutazioneSpinner, 1, 5);
-            grid.add(new Label("URL Copertina:"), 0, 6);
-            grid.add(urlField, 1, 6);
-
-            dialog.getDialogPane().setContent(grid);
-
-            dialog.setResultConverter(dialogButton -> {
-                if (dialogButton == okButtonType) {
-                    libroSelezionato.setTitolo(titoloField.getText());
-                    libroSelezionato.setAutore(autoreField.getText());
-                    libroSelezionato.setGenere(genereField.getText());
-                    libroSelezionato.setIsbn(isbnField.getText());
-                    libroSelezionato.setStatoLettura(statoCombo.getValue());
-                    libroSelezionato.setValutazione(valutazioneSpinner.getValue());
-                    libroSelezionato.setCopertinaUrl(urlField.getText().trim());
-
-                    // Salvo le modifiche nel controller
-                    controller.gestisciAggiornamentoLibro(libroSelezionato);
-                }
-                return null;
-            });
-
-            dialog.showAndWait();
-
-            // Aggiorno la lista e la tabella con i dati aggiornati
-            libriList.setAll(controller.gestisciElencoLibri());
-        } else {
+        Libro sel = tabellaLibri.getSelectionModel().getSelectedItem();
+        if (sel == null) {
             mostraAlertWarning("Seleziona un libro da modificare.");
+            return;
         }
-    }
 
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Modifica Libro");
+        ButtonType btnSave = new ButtonType("Salva", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().setAll(btnSave, ButtonType.CANCEL);
+
+        // Prepopolo
+        TextField titoloF = new TextField(sel.getTitolo());
+        TextField autoreF = new TextField(sel.getAutore());
+        TextField genereF = new TextField(sel.getGenere());
+        TextField isbnF   = new TextField(sel.getIsbn());
+        ComboBox<StatoLettura> statoC = new ComboBox<>(FXCollections.observableArrayList(StatoLettura.values()));
+        statoC.setValue(sel.getStatoLettura());
+        Spinner<Integer> valSpinner = new Spinner<>(0,5, sel.getValutazione());
+        TextField urlF = new TextField(sel.getCopertinaUrl());
+
+        GridPane grid = new GridPane(); grid.setHgap(10); grid.setVgap(10);
+        grid.add(new Label("Titolo:"),0,0);       grid.add(titoloF,1,0);
+        grid.add(new Label("Autore:"),0,1);      grid.add(autoreF,1,1);
+        grid.add(new Label("Genere:"),0,2);      grid.add(genereF,1,2);
+        grid.add(new Label("ISBN:"),0,3);        grid.add(isbnF,1,3);
+        grid.add(new Label("Stato Lettura:"),0,4);grid.add(statoC,1,4);
+        grid.add(new Label("Valutazione:"),0,5); grid.add(valSpinner,1,5);
+        grid.add(new Label("URL Copertina:"),0,6);grid.add(urlF,1,6);
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(b -> {
+            if (b == btnSave) {
+                new ConcreteBuilder(sel)
+                        .setTitolo(titoloF.getText())
+                        .setAutore(autoreF.getText())
+                        .setGenere(genereF.getText())
+                        .setIsbn(isbnF.getText())
+                        .setStatoLettura(statoC.getValue())
+                        .setValutazione(valSpinner.getValue())
+                        .setCopertinaUrl(urlF.getText().trim().isEmpty() ? null : urlF.getText().trim())
+                        .build();
+                controller.gestisciAggiornamentoLibro(sel);
+            }
+            return null;
+        });
+
+        dialog.showAndWait();
+        libriList.setAll(controller.gestisciElencoLibri());
+    }
 
     @FXML
     private void handleElimina() {
-        Libro libroSelezionato = tabellaLibri.getSelectionModel().getSelectedItem();
-        if (libroSelezionato != null) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Conferma Eliminazione");
-            alert.setHeaderText(null);
-            alert.setContentText("Sei sicuro di voler eliminare il libro \"" + libroSelezionato.getTitolo() + "\"?");
-
-            alert.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    controller.gestisciEliminazioneLibro(libroSelezionato.getId());
+        Libro sel = tabellaLibri.getSelectionModel().getSelectedItem();
+        if (sel != null) {
+            Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+            a.setHeaderText(null);
+            a.setContentText("Eliminare \"" + sel.getTitolo() + "\"?");
+            a.showAndWait().ifPresent(r -> {
+                if (r == ButtonType.OK) {
+                    controller.gestisciEliminazioneLibro(sel.getId());
                     libriList.setAll(controller.gestisciElencoLibri());
                 }
             });
@@ -286,32 +242,22 @@ public class LibroGUIController {
 
     @FXML
     private void handleApplicaFiltro() {
-        String titoloFiltro = filterTitolo.getText().toLowerCase().trim();
-        String autoreFiltro = filterAutore.getText().toLowerCase().trim();
-        String genereFiltro = filterGenere.getText().toLowerCase().trim(); // <-- aggiunto
-        String statoFiltro = filterStato.getValue();
-        int valutazioneMinima = filterValutazione.getValue();
+        String t = filterTitolo.getText().toLowerCase().trim();
+        String a = filterAutore.getText().toLowerCase().trim();
+        String g = filterGenere.getText().toLowerCase().trim();
+        String s = filterStato.getValue();
+        int v = filterValutazione.getValue();
 
-        List<Libro> tuttiLibri = controller.gestisciElencoLibri();
-
-        List<Libro> filtrati = tuttiLibri.stream()
-                .filter(l -> l.getTitolo().toLowerCase().contains(titoloFiltro))
-                .filter(l -> l.getAutore().toLowerCase().contains(autoreFiltro))
-                .filter(l -> l.getGenere().toLowerCase().contains(genereFiltro)) // <-- aggiunto
-                .filter(l -> {
-                    if (statoFiltro == null || statoFiltro.equals("Tutti")) {
-                        return true;
-                    }
-                    StatoLettura statoEnum = StatoLettura.fromLabel(statoFiltro);
-                    return l.getStatoLettura() == statoEnum;
-                })
-                .filter(l -> l.getValutazione() >= valutazioneMinima)
+        List<Libro> res = controller.gestisciElencoLibri().stream()
+                .filter(l -> l.getTitolo().toLowerCase().contains(t))
+                .filter(l -> l.getAutore().toLowerCase().contains(a))
+                .filter(l -> l.getGenere().toLowerCase().contains(g))
+                .filter(l -> s.equals("Tutti") || l.getStatoLettura().toString().equals(s))
+                .filter(l -> l.getValutazione() >= v)
                 .collect(Collectors.toList());
 
-        libriList.setAll(filtrati);
+        libriList.setAll(res);
     }
-
-
 
     @FXML
     private void handleResetFiltri() {
@@ -325,57 +271,79 @@ public class LibroGUIController {
 
     @FXML
     private void handleRicerca() {
-        String query = searchBar.getText();
-        List<Libro> risultati = controller.gestisciRicerca(query);
-        libriList.setAll(risultati);
+        libriList.setAll(controller.gestisciRicerca(searchBar.getText()));
     }
 
     @FXML
-    private void handleEsportaCsv() {
-        List<Libro> libri = controller.gestisciElencoLibri();
-        String percorsoFile = "libri.csv";
-
+    private void handleEsportaCSV() {
         try {
-            CsvExporter.esporta(libri, percorsoFile);
-            mostraAlertInfo("Esportazione CSV completata con successo in:\n" + percorsoFile);
+            CSVExporter.esporta(controller.gestisciElencoLibri(), "libri.csv");
+            mostraAlertInfo("Esportazione completata!");
         } catch (Exception e) {
-            mostraAlertWarning("Errore durante l'esportazione del file CSV: " + e.getMessage());
+            mostraAlertWarning("Errore export: " + e.getMessage());
         }
     }
+
     @FXML
     private void handleImportaCSV() {
-        String percorsoFile = "libri.csv";
-
         try {
-            csvImporter.importaLibriDaCsv(percorsoFile);
-
-            // Aggiorna la tabella con i nuovi dati importati
+            csvImporter.importaLibriDaCsv("libri.csv");
             libriList.setAll(controller.gestisciElencoLibri());
-            tabellaLibri.refresh();
-
-            mostraAlertInfo("📥 Importazione completata da: " + percorsoFile);
+            mostraAlertInfo("Importazione completata!");
         } catch (Exception e) {
-            mostraAlertWarning("❌ Errore durante l'importazione: " + e.getMessage());
+            mostraAlertWarning("Errore import: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleEsportaJSON() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Salva libreria come JSON");
+        fileChooser.getExtensionFilters()
+                .add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
+
+        File file = fileChooser.showSaveDialog(tabellaLibri.getScene().getWindow());
+        if (file != null) {
+            try {
+                JSONExporter.esportaJson(file, controller.gestisciElencoLibri());
+                mostraAlertInfo("Esportazione JSON completato!");
+            } catch (Exception e) {
+                mostraAlertWarning("Errore esportazione JSON: " + e.getMessage());
+            }
+        }
+    }
+
+    @FXML
+    private void handleImportaJSON() {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Apri file JSON per importare");
+            fileChooser.getExtensionFilters()
+                    .add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
+
+            File file = fileChooser.showOpenDialog(tabellaLibri.getScene().getWindow());
+            if (file != null) {
+                try {
+                    jsonImporter.importaJson(file);
+                    } catch (Exception e) {
+                    mostraAlertWarning("Errore importazione JSON: " + e.getMessage());
+
+                }
+            libriList.setAll(controller.gestisciElencoLibri());
+            mostraAlertInfo("Importazione JSON completato!");
         }
     }
 
 
-
-
-
-    private void mostraAlertWarning(String messaggio) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Attenzione");
-        alert.setHeaderText(null);
-        alert.setContentText(messaggio);
-        alert.showAndWait();
+    private void mostraAlertWarning(String msg) {
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
     }
-
-    private void mostraAlertInfo(String messaggio) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Informazione");
-        alert.setHeaderText(null);
-        alert.setContentText(messaggio);
-        alert.showAndWait();
+    private void mostraAlertInfo(String msg) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
     }
 }

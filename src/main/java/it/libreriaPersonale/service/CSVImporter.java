@@ -1,6 +1,5 @@
 package it.libreriaPersonale.service;
 
-import it.libreriaPersonale.dao.LibroDAO;
 import it.libreriaPersonale.model.Libro;
 import it.libreriaPersonale.model.StatoLettura;
 import it.libreriaPersonale.repository.LibroRepository;
@@ -9,12 +8,12 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class CsvImporter {
+public class CSVImporter {
 
-    private final LibroDAO libroDAO;
+    private final LibroRepository libroRepository;
 
-    public CsvImporter(LibroDAO libroDAOù) {
-        this.libroDAO = libroDAOù;
+    public CSVImporter(LibroRepository lr) {
+        this.libroRepository = lr;
     }
 
     public void importaLibriDaCsv(String path) {
@@ -28,7 +27,7 @@ public class CsvImporter {
                 // id,titolo,autore,genere,isbn,statolettura,valutazione,copertinaUrl
                 String isbn = campi[4].trim();
 
-                if (libroDAO.esistePerIsbn(isbn)) {
+                if (libroRepository.esistePerIsbn(isbn)) {
                     continue;
                 }
 
@@ -56,7 +55,7 @@ public class CsvImporter {
                     libro.setCopertinaUrl(null);
                 }
 
-                libroDAO.salva(libro);
+                libroRepository.salva(libro);
             }
         } catch (IOException e) {
             e.printStackTrace();

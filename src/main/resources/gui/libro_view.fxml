@@ -21,7 +21,9 @@
                 <Button text="Modifica" onAction="#handleModifica"/>
                 <Button text="Elimina" onAction="#handleElimina"/>
                 <Button text="Importa da CSV" onAction="#handleImportaCSV" />
-                <Button fx:id="EsportaCsv" text="Esporta CSV" onAction="#handleEsportaCsv"/>
+                <Button text="Esporta CSV" onAction="#handleEsportaCSV"/>
+                <Button text="Importa da JSON" onAction="#handleImportaJSON" />
+                <Button fx:id="EsportaJson" text="Esporta JSON" onAction="#handleEsportaJSON"/>
             </ToolBar>
 
             <!-- Filtro -->
