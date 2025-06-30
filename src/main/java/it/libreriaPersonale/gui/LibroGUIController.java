@@ -7,6 +7,7 @@ import it.libreriaPersonale.model.Libro;
 import it.libreriaPersonale.model.StatoLettura;
 import it.libreriaPersonale.repository.LibroRepository;
 import it.libreriaPersonale.service.*;
+import it.libreriaPersonale.strategy.*;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,9 +19,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
-
 import java.io.File;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LibroGUIController {
@@ -33,12 +33,20 @@ public class LibroGUIController {
     @FXML private TableColumn<Libro, Integer> colonnaValutazione;
     @FXML private TableColumn<Libro, String> colCopertina;
 
+
+    @FXML private MenuButton menuJsonCsv;
+    @FXML private MenuItem miImportaCSV;
+    @FXML private MenuItem miEsportaCSV;
+    @FXML private MenuItem miImportaJSON;
+    @FXML private MenuItem miEsportaJSON;
     @FXML private TextField filterTitolo;
     @FXML private TextField filterAutore;
     @FXML private TextField filterGenere;
     @FXML private ComboBox<String> filterStato;
     @FXML private ComboBox<Integer> filterValutazione;
     @FXML private TextField searchBar;
+    @FXML private ComboBox<String> sortCriteria;
+
 
     private ObservableList<Libro> libriList;
     private LibroController controller;
@@ -46,6 +54,7 @@ public class LibroGUIController {
     private LibroRepository repository;
     private CSVImporter csvImporter;
     private JSONImporter jsonImporter;
+    private final Map<String, IFiltroStrategy> filterStrategies = new HashMap<>();
 
     @FXML
     public void initialize() {
@@ -88,12 +97,22 @@ public class LibroGUIController {
                 }
             }
         });
+        miImportaCSV.setOnAction(e -> handleImportaCSV());
+        miEsportaCSV.setOnAction(e -> handleEsportaCSV());
+        miImportaJSON.setOnAction(e -> handleImportaJSON());
+        miEsportaJSON.setOnAction(e -> handleEsportaJSON());
 
         // Carico dati
         libriList = FXCollections.observableArrayList(controller.gestisciElencoLibri());
         tabellaLibri.setItems(libriList);
 
         // Inizializza filtri
+        filterStrategies.put("Titolo",  new TitoloFiltroStrategy());
+        filterStrategies.put("Autore",  new AutoreFiltroStrategy());
+        filterStrategies.put("Genere",  new GenereFiltroStrategy());
+        filterStrategies.put("Stato",   new StatoFiltroStrategy());
+        filterStrategies.put("Valutazione", new ValutazioneFiltroStrategy());
+
         filterTitolo.clear();
         filterAutore.clear();
         filterGenere.clear();
@@ -106,6 +125,15 @@ public class LibroGUIController {
 
         filterValutazione.setItems(FXCollections.observableArrayList(0,1,2,3,4,5));
         filterValutazione.getSelectionModel().select(0);
+
+        // opzioni di ordinamento
+        sortCriteria.setItems(FXCollections.observableArrayList(
+                "Titolo ↑", "Titolo ↓",
+                "Autore ↑", "Autore ↓",
+                "Valutazione ↑", "Valutazione ↓"
+        ));
+        sortCriteria.getSelectionModel().selectFirst();
+
     }
 
     @FXML
@@ -242,37 +270,78 @@ public class LibroGUIController {
 
     @FXML
     private void handleApplicaFiltro() {
-        String t = filterTitolo.getText().toLowerCase().trim();
-        String a = filterAutore.getText().toLowerCase().trim();
-        String g = filterGenere.getText().toLowerCase().trim();
-        String s = filterStato.getValue();
-        int v = filterValutazione.getValue();
+        // prendo la lista base
+        List<Libro> base = controller.gestisciElencoLibri();
 
-        List<Libro> res = controller.gestisciElencoLibri().stream()
-                .filter(l -> l.getTitolo().toLowerCase().contains(t))
-                .filter(l -> l.getAutore().toLowerCase().contains(a))
-                .filter(l -> l.getGenere().toLowerCase().contains(g))
-                .filter(l -> s.equals("Tutti") || l.getStatoLettura().toString().equals(s))
-                .filter(l -> l.getValutazione() >= v)
-                .collect(Collectors.toList());
+        // applico in sequenza ciascuna strategy
+        List<Libro> result = filterStrategies.get("Titolo")
+                .applica(base, filterTitolo.getText().trim());
+        result = filterStrategies.get("Autore")
+                .applica(result, filterAutore.getText().trim());
+        result = filterStrategies.get("Genere")
+                .applica(result, filterGenere.getText().trim());
+        result = filterStrategies.get("Stato")
+                .applica(result, filterStato.getValue());
+        result = filterStrategies.get("Valutazione")
+                .applica(result, String.valueOf(filterValutazione.getValue()));
 
-        libriList.setAll(res);
+        libriList.setAll(result);
     }
+
 
     @FXML
     private void handleResetFiltri() {
-        filterTitolo.clear();
-        filterAutore.clear();
-        filterGenere.clear();
-        filterStato.getSelectionModel().selectFirst();
-        filterValutazione.getSelectionModel().select(0);
-        libriList.setAll(controller.gestisciElencoLibri());
+            filterTitolo.clear();
+            filterAutore.clear();
+            filterGenere.clear();
+            filterStato.getSelectionModel().selectFirst();
+            filterValutazione.getSelectionModel().select(0);
+            libriList.setAll(controller.gestisciElencoLibri());
     }
+
+
 
     @FXML
     private void handleRicerca() {
         libriList.setAll(controller.gestisciRicerca(searchBar.getText()));
     }
+
+    @FXML
+    private void handleOrdinamento() {
+        String criterio = sortCriteria.getValue();
+        // prendo i dati correnti dalla tabella
+        List<Libro> lista = new ArrayList<>(libriList);
+
+        Comparator<Libro> comp;
+        switch (criterio) {
+            case "Titolo ↓":
+                comp = Comparator.comparing(Libro::getTitolo, String.CASE_INSENSITIVE_ORDER).reversed();
+                break;
+            case "Titolo ↑":
+                comp = Comparator.comparing(Libro::getTitolo, String.CASE_INSENSITIVE_ORDER);
+                break;
+            case "Autore ↓":
+                comp = Comparator.comparing(Libro::getAutore, String.CASE_INSENSITIVE_ORDER).reversed();
+                break;
+            case "Autore ↑":
+                comp = Comparator.comparing(Libro::getAutore, String.CASE_INSENSITIVE_ORDER);
+                break;
+            case "Valutazione ↓":
+                comp = Comparator.comparingInt(Libro::getValutazione).reversed();
+                break;
+            case "Valutazione ↑":
+            default:
+                comp = Comparator.comparingInt(Libro::getValutazione);
+                break;
+        }
+
+        // ordino e aggiorno la lista
+        List<Libro> ordinata = lista.stream()
+                .sorted(comp)
+                .collect(Collectors.toList());
+        libriList.setAll(ordinata);
+    }
+
 
     @FXML
     private void handleEsportaCSV() {

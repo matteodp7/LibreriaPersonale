@@ -20,10 +20,17 @@
                 <Button text="Aggiungi" onAction="#handleAggiungi"/>
                 <Button text="Modifica" onAction="#handleModifica"/>
                 <Button text="Elimina" onAction="#handleElimina"/>
-                <Button text="Importa da CSV" onAction="#handleImportaCSV" />
-                <Button text="Esporta CSV" onAction="#handleEsportaCSV"/>
-                <Button text="Importa da JSON" onAction="#handleImportaJSON" />
-                <Button fx:id="EsportaJson" text="Esporta JSON" onAction="#handleEsportaJSON"/>
+                <!-- Nel tuo file libro_view.fxml, al posto dei quattro Button -->
+                <MenuButton fx:id="menuJsonCsv" text="Azioni" layoutX="10" layoutY="10">
+                    <items>
+                        <MenuItem fx:id="miImportaCSV" text="Importa CSV" onAction="#handleImportaCSV"/>
+                        <MenuItem fx:id="miEsportaCSV" text="Esporta CSV" onAction="#handleEsportaCSV"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem fx:id="miImportaJSON" text="Importa JSON" onAction="#handleImportaJSON"/>
+                        <MenuItem fx:id="miEsportaJSON" text="Esporta JSON" onAction="#handleEsportaJSON"/>
+                    </items>
+                </MenuButton>
+
             </ToolBar>
 
             <!-- Filtro -->
@@ -71,6 +78,13 @@
                 <TextField fx:id="searchBar" promptText="Inserisci titolo, autore" />
                 <Button text="Cerca" onAction="#handleRicerca" />
             </HBox>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Ordina:" />
+                <ComboBox fx:id="sortCriteria" prefWidth="150" />
+                <Button text="Ordina" onAction="#handleOrdinamento"/>
+            </HBox>
+
         </VBox>
     </top>
 
