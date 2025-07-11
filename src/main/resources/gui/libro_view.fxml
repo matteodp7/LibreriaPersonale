@@ -21,7 +21,7 @@
                 <Button text="Modifica" onAction="#handleModifica"/>
                 <Button text="Elimina" onAction="#handleElimina"/>
                 <!-- Nel tuo file libro_view.fxml, al posto dei quattro Button -->
-                <MenuButton fx:id="menuJsonCsv" text="Azioni" layoutX="10" layoutY="10">
+                <MenuButton fx:id="menuJsonCsv" text="Importa/Esporta" layoutX="10" layoutY="10">
                     <items>
                         <MenuItem fx:id="miImportaCSV" text="Importa CSV" onAction="#handleImportaCSV"/>
                         <MenuItem fx:id="miEsportaCSV" text="Esporta CSV" onAction="#handleEsportaCSV"/>
@@ -102,5 +102,11 @@
             </columns>
         </TableView>
     </center>
+
+    <bottom>
+        <HBox>
+            <Button text="Undo" onAction="#handleUndo" />
+        </HBox>
+    </bottom>
 
 </BorderPane>

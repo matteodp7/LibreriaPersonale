@@ -3,6 +3,8 @@ package it.libreriaPersonale.gui;
 import it.libreriaPersonale.builder.ConcreteBuilder;
 import it.libreriaPersonale.builder.DirectorLibro;
 import it.libreriaPersonale.controller.LibroController;
+import it.libreriaPersonale.memento.Caretaker;
+import it.libreriaPersonale.memento.Originator;
 import it.libreriaPersonale.model.Libro;
 import it.libreriaPersonale.model.StatoLettura;
 import it.libreriaPersonale.repository.LibroRepository;
@@ -11,6 +13,7 @@ import it.libreriaPersonale.strategy.*;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
@@ -19,7 +22,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
+
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,7 +41,7 @@ public class LibroGUIController {
     @FXML private TableColumn<Libro, String> colCopertina;
 
 
-    @FXML private MenuButton menuJsonCsv;
+
     @FXML private MenuItem miImportaCSV;
     @FXML private MenuItem miEsportaCSV;
     @FXML private MenuItem miImportaJSON;
@@ -55,7 +62,8 @@ public class LibroGUIController {
     private CSVImporter csvImporter;
     private JSONImporter jsonImporter;
     private final Map<String, IFiltroStrategy> filterStrategies = new HashMap<>();
-
+    private Originator originator = new Originator()  ;
+    private Caretaker caretaker= new Caretaker(originator) ;
     @FXML
     public void initialize() {
         controller    = new LibroController();
@@ -63,6 +71,8 @@ public class LibroGUIController {
         repository= new LibroRepository();
         csvImporter   = new CSVImporter(controller.getLibroRepository());
         jsonImporter   = new JSONImporter(service, repository);
+        originator.setState(controller.gestisciElencoLibri());
+        caretaker.doAction(libriList);
 
         // Colonne tabella
         colTitolo.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getTitolo()));
@@ -199,6 +209,7 @@ public class LibroGUIController {
 
     @FXML
     private void handleModifica() {
+
         Libro sel = tabellaLibri.getSelectionModel().getSelectedItem();
         if (sel == null) {
             mostraAlertWarning("Seleziona un libro da modificare.");
@@ -267,6 +278,7 @@ public class LibroGUIController {
             mostraAlertWarning("Seleziona un libro da eliminare.");
         }
     }
+
 
     @FXML
     private void handleApplicaFiltro() {
@@ -358,6 +370,8 @@ public class LibroGUIController {
         try {
             csvImporter.importaLibriDaCsv("libri.csv");
             libriList.setAll(controller.gestisciElencoLibri());
+            originator.setState(controller.gestisciElencoLibri());
+            caretaker.doAction(libriList);
             mostraAlertInfo("Importazione completata!");
         } catch (Exception e) {
             mostraAlertWarning("Errore import: " + e.getMessage());
@@ -384,23 +398,46 @@ public class LibroGUIController {
 
     @FXML
     private void handleImportaJSON() {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Apri file JSON per importare");
-            fileChooser.getExtensionFilters()
-                    .add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Apri file JSON per importare");
+        fileChooser.getExtensionFilters()
+                .add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
 
-            File file = fileChooser.showOpenDialog(tabellaLibri.getScene().getWindow());
+        File file = fileChooser.showOpenDialog(tabellaLibri.getScene().getWindow());
             if (file != null) {
                 try {
                     jsonImporter.importaJson(file);
-                    } catch (Exception e) {
+                } catch (Exception e) {
                     mostraAlertWarning("Errore importazione JSON: " + e.getMessage());
 
                 }
-            libriList.setAll(controller.gestisciElencoLibri());
-            mostraAlertInfo("Importazione JSON completato!");
-        }
+                libriList.setAll(controller.gestisciElencoLibri());
+                originator.setState(controller.gestisciElencoLibri());
+                caretaker.doAction(libriList);
+                mostraAlertInfo("Importazione JSON completato!");
+            }
     }
+
+    @FXML
+    private void handleUndo() {
+        // 1) Esegui restore in memoria
+        caretaker.undo();
+        List<Libro> previous = originator.getState();
+
+        // 2) Trova differenza: quali ID sono stati tolti
+        List<Libro> currentDb = controller.gestisciElencoLibri();
+        for (Libro l : currentDb) {
+            if (previous.stream().noneMatch(p -> p.getId().equals(l.getId()))) {
+                // quel libro era stato appena aggiunto: eliminalo dal DB
+                controller.gestisciEliminazioneLibro(l.getId());
+            }
+        }
+
+        // 3) Aggiorna GUI
+        libriList.setAll(previous);
+    }
+
+
 
 
     private void mostraAlertWarning(String msg) {
@@ -415,4 +452,6 @@ public class LibroGUIController {
         a.setContentText(msg);
         a.showAndWait();
     }
+
+
 }

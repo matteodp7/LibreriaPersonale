@@ -42,6 +42,17 @@ public class Libro implements ILibro, Serializable {
         this.copertinaUrl = copertinaUrl;
     }
 
+    public Libro(Libro other) {
+        this.id = other.id;
+        this.isbn = other.isbn;
+        this.titolo = other.titolo;
+        this.autore = other.autore;
+        this.genere = other.genere;
+        this.valutazione = other.valutazione;
+        this.statolettura = other.statolettura;
+        this.copertinaUrl = other.copertinaUrl;
+    }
+
     @Override
     public Long getId() {
         return id;
