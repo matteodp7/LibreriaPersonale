@@ -7,9 +7,8 @@ public class Memento {
     private final List<Libro> state;
 
     public Memento(List<Libro> state) {
-        // Copia difensiva per evitare modifiche esterne
         this.state = state.stream()
-                .map(Libro::new)  // Assumendo che Libro abbia un costruttore di copia
+                .map(Libro::new)
                 .toList();
     }
 

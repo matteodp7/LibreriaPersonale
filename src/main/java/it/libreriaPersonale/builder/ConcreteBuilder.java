@@ -7,12 +7,10 @@ public class ConcreteBuilder implements InterfaceBuilder {
 
     private final Libro libro;
 
-    // Costruttore per nuova istanza
     public ConcreteBuilder() {
         this.libro = new Libro();
     }
 
-    // Costruttore per modificare esistente
     public ConcreteBuilder(Libro libroEsistente) {
         this.libro = libroEsistente;
     }

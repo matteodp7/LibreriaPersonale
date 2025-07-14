@@ -5,9 +5,7 @@ import it.libreriaPersonale.model.Libro;
 
 public class LibroAssembler {
 
-    /**
-     * Converte una Entity Libro in un DTO.
-     */
+
     public static LibroDTO toDTO(Libro entity) {
         if (entity == null) {
             return null;
@@ -24,10 +22,7 @@ public class LibroAssembler {
         return dto;
     }
 
-    /**
-     * Crea un nuovo oggetto Domain (Entity) a partire dal DTO.
-     * Non imposta l'id, adatto per creazioni.
-     */
+
     public static Libro createDomainObject(LibroDTO dto) {
         if (dto == null) {
             return null;
@@ -44,9 +39,7 @@ public class LibroAssembler {
         return entity;
     }
 
-    /**
-     * Restituisce un oggetto Domain (Entity) aggiornato con i dati del DTO, incluso l'id se presente.
-     */
+
     public static void updateDomainObject(LibroDTO dto, Libro entity) {
         if (dto == null) {
             return ;

@@ -14,8 +14,8 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/libro_view.fxml"));
-        Parent root = loader.load();  // carica il FXML una volta sola
-        Scene scene = new Scene(root, 600, 400);  // usa root qui
+        Parent root = loader.load();
+        Scene scene = new Scene(root, 600, 400);
 
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 

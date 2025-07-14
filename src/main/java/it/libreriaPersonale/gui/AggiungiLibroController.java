@@ -33,7 +33,6 @@ public class AggiungiLibroController {
     @FXML private void handleSalva() {
         System.err.println("[Controller] handleSalva() invoked");
 
-        // Costruzione tramite Builder
         ConcreteBuilder builder = new ConcreteBuilder();
         DirectorLibro director = new DirectorLibro(builder);
 

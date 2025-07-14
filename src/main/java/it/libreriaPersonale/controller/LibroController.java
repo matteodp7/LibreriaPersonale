@@ -22,9 +22,6 @@ public class LibroController {
     }
 
 
-    /**
-     * Ritorna true se l'aggiunta ha avuto successo, false se l'ISBN era duplicato.
-     */
     public boolean gestisciAggiuntaLibro(Libro libro) {
         return service.aggiungiLibro(libro);
     }
@@ -51,9 +48,7 @@ public class LibroController {
         return service.cercaLibri(query);
     }
 
-    /**
-     * Il parametro ora è di tipo StatoLettura anziché String.
-     */
+
     public List<Libro> gestisciFiltroPerStato(StatoLettura stato) {
         return service.filtraPerStato(stato);
     }

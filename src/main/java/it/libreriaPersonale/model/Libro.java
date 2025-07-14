@@ -3,10 +3,7 @@ package it.libreriaPersonale.model;
 import jakarta.persistence.*;
 import java.io.Serializable;
 
-/**
- * Entity Libro.
- * Tutti i campi e metodi sono integrati direttamente qui.
- */
+
 @Entity
 @Table(name = "libri")
 public class Libro implements ILibro, Serializable {

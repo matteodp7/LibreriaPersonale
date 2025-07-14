@@ -10,9 +10,7 @@ public enum DatabaseSingleton {
 
     private Connection connection;
 
-    /**
-     * Restituisce la connessione al database, creandola al primo accesso.
-     */
+
     public synchronized Connection getConnection() {
         if (connection != null && !isClosed(connection)) {
             return connection;
@@ -42,9 +40,7 @@ public enum DatabaseSingleton {
         return connection;
     }
 
-    /**
-     * Chiude la connessione, se aperta.
-     */
+
     public synchronized void closeConnection() {
         if (connection != null) {
             try {
@@ -58,9 +54,7 @@ public enum DatabaseSingleton {
         }
     }
 
-    /**
-     * Verifica se la connessione è chiusa o nulla.
-     */
+
     private boolean isClosed(Connection conn) {
         try {
             return conn.isClosed();

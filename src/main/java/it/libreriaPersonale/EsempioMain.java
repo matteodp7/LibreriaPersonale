@@ -15,11 +15,9 @@ public class EsempioMain {
     public static void main(String[] args) {
         LibroController controller = new LibroController();
 
-        // Creiamo CsvImporter passando il repository usato da LibroService/LibroController
         CSVImporter importer = new CSVImporter(new LibroRepository());
 
-        // Importiamo i libri da CSV (evita duplicati basandosi sull'ISBN)
-        importer.importaLibriDaCsv("libri.csv"); // Assicurati che 'libri.csv' sia nel path giusto
+        importer.importaLibriDaCsv("libri.csv");
 
         Scanner scanner = new Scanner(System.in);
         boolean continua = true;
@@ -53,7 +51,6 @@ public class EsempioMain {
                     System.out.print("ISBN: ");
                     String isbn = scanner.nextLine();
 
-                    // Chiediamo lo stato di lettura come enum
                     System.out.println("Stato lettura (scegli tra: NON_LETTO, IN_LETTURA, LETTO): ");
                     String statoInput = scanner.nextLine().trim().toUpperCase();
                     StatoLettura statoEnum;

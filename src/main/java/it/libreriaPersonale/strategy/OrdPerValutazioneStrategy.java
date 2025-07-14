@@ -15,4 +15,5 @@ public class OrdPerValutazioneStrategy implements IOrdinamentoStrategy {
                 .collect(Collectors.toList());
     }
 
+
 }

@@ -4,7 +4,6 @@
     -fx-padding: 15px;
 }
 
-/* Bottoni */
 .button {
     -fx-padding: 10 20;
     -fx-font-size: 14px;
@@ -18,20 +17,17 @@
     -fx-background-color: #618e6e; /* verde più chiaro al passaggio */
 }
 
-/* Etichette principali */
 .label {
     -fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: #2e4633; /* verde bosco */
 }
 
-/* Etichette secondarie */
 .label-minor {
     -fx-font-size: 14px;
     -fx-text-fill: #5f7e68; /* verde/grigio tenue */
 }
 
-/* Righe alternate per TableView */
 .table-row-cell:odd {
     -fx-background-color: #e9f2ec; /* verde chiarissimo */
 }
@@ -39,7 +35,6 @@
     -fx-background-color: #f7fbf9; /* quasi bianco */
 }
 
-/* TextField e ComboBox */
 .text-field, .combo-box {
     -fx-background-color: #ffffff;
     -fx-border-color: #a3c0ac;     /* verde pallido */
@@ -52,19 +47,16 @@
     -fx-effect: dropshadow(gaussian, rgba(75,113,89,0.3), 4, 0.2, 0, 1);
 }
 
-/* Immagini */
 .image-view {
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
 }
 
-/* Header della tabella */
 .table-view .column-header {
     -fx-background-color: #d8e6dc;  /* verde salvia tenue */
     -fx-font-weight: bold;
     -fx-text-fill: #2e4633;
 }
 
-/* Tooltip */
 .tooltip {
     -fx-background-color: #e5f2e9;
     -fx-text-fill: #2e4633;
@@ -72,13 +64,11 @@
     -fx-padding: 8;
 }
 
-/* Righe selezionate nella TableView */
 .table-row-cell:filled:selected {
     -fx-background-color: #c1dacf; /* colore di sfondo selezione */
     -fx-text-fill: black;          /* colore del testo selezionato */
 }
 
-/* Celle di testo selezionate */
 .table-cell:selected {
     -fx-text-fill: black;
 }

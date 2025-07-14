@@ -45,7 +45,6 @@ public class ModificaLibroController {
     @FXML private void handleSalva() {
         System.err.println("[Controller] handleSalva() modifica invoked");
 
-        // Aggiorna usando ConcreteBuilder sul libro esistente
         ConcreteBuilder builder = new ConcreteBuilder(libroDaModificare);
         builder
                 .setTitolo(campoTitolo.getText())

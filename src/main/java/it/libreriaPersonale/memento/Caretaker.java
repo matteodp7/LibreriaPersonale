@@ -14,8 +14,8 @@ public class Caretaker {
     }
 
     public void doAction(List<Libro> newState) {
-        history.push(originator.save());  // Salva lo stato prima della modifica
-        originator.setState(newState);    // Applica il nuovo stato
+        history.push(originator.save());
+        originator.setState(newState);
     }
 
     public void undo() {

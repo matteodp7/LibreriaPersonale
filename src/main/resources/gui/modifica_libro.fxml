@@ -15,12 +15,10 @@
     <TextField fx:id="campoGenere" promptText="Genere"/>
     <TextField fx:id="campoIsbn" promptText="ISBN"/>
 
-    <!-- Ora popolato dinamicamente dal controller -->
     <ComboBox fx:id="comboStato"/>
 
     <Spinner fx:id="spinnerValutazione" editable="true"/>
 
-    <!-- Nuovo campo per URL della copertina -->
     <TextField fx:id="campoCopertinaUrl" promptText="URL Copertina"/>
 
     <HBox spacing="10">

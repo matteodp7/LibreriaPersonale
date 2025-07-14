@@ -60,6 +60,7 @@ public class LibroGUIController {
     private final Map<String, IFiltroStrategy> filterStrategies = new HashMap<>();
     private Originator originator = new Originator()  ;
     private Caretaker caretaker= new Caretaker(originator) ;
+    private Map<String, IOrdinamentoStrategy> sortStrategies = new LinkedHashMap<>();
     @FXML
     public void initialize() {
         controller    = new LibroController();
@@ -70,7 +71,6 @@ public class LibroGUIController {
         originator.setState(controller.gestisciElencoLibri());
         caretaker.doAction(libriList);
 
-        // Colonne tabella
         colTitolo.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getTitolo()));
         colAutore.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAutore()));
         colonnaGenere.setCellValueFactory(new PropertyValueFactory<>("genere"));
@@ -108,11 +108,9 @@ public class LibroGUIController {
         miImportaJSON.setOnAction(e -> handleImportaJSON());
         miEsportaJSON.setOnAction(e -> handleEsportaJSON());
 
-        // Carico dati
         libriList = FXCollections.observableArrayList(controller.gestisciElencoLibri());
         tabellaLibri.setItems(libriList);
 
-        // Inizializza filtri
         filterStrategies.put("Titolo",  new TitoloFiltroStrategy());
         filterStrategies.put("Autore",  new AutoreFiltroStrategy());
         filterStrategies.put("Genere",  new GenereFiltroStrategy());
@@ -132,12 +130,14 @@ public class LibroGUIController {
         filterValutazione.setItems(FXCollections.observableArrayList(0,1,2,3,4,5));
         filterValutazione.getSelectionModel().select(0);
 
-        // opzioni di ordinamento
-        sortCriteria.setItems(FXCollections.observableArrayList(
-                "Titolo ↑", "Titolo ↓",
-                "Autore ↑", "Autore ↓",
-                "Valutazione ↑", "Valutazione ↓"
-        ));
+        sortStrategies.put("Titolo ↑",  new OrdPerTitoloStrategy());
+        sortStrategies.put("Titolo ↓",  new ReverseStrategy(new OrdPerTitoloStrategy()));
+        sortStrategies.put("Autore ↑",  new OrdPerAutoreStrategy());
+        sortStrategies.put("Autore ↓",  new ReverseStrategy(new OrdPerAutoreStrategy()));
+        sortStrategies.put("Valutazione ↑", new ReverseStrategy(new OrdPerValutazioneStrategy())); // oppure:
+        sortStrategies.put("Valutazione ↓", new OrdPerValutazioneStrategy());
+
+        sortCriteria.setItems(FXCollections.observableArrayList(sortStrategies.keySet()));
         sortCriteria.getSelectionModel().selectFirst();
 
     }
@@ -149,7 +149,6 @@ public class LibroGUIController {
         ButtonType btnAggiungi = new ButtonType("Aggiungi", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().setAll(btnAggiungi, ButtonType.CANCEL);
 
-        // Campi dialog
         TextField titoloF = new TextField();
         TextField autoreF = new TextField();
         TextField genereF = new TextField();
@@ -217,7 +216,6 @@ public class LibroGUIController {
         ButtonType btnSave = new ButtonType("Salva", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().setAll(btnSave, ButtonType.CANCEL);
 
-        // Prepopolo
         TextField titoloF = new TextField(sel.getTitolo());
         TextField autoreF = new TextField(sel.getAutore());
         TextField genereF = new TextField(sel.getGenere());
@@ -278,10 +276,8 @@ public class LibroGUIController {
 
     @FXML
     private void handleApplicaFiltro() {
-        // prendo la lista base
         List<Libro> base = controller.gestisciElencoLibri();
 
-        // applico in sequenza ciascuna strategy
         List<Libro> result = filterStrategies.get("Titolo")
                 .applica(base, filterTitolo.getText().trim());
         result = filterStrategies.get("Autore")
@@ -317,37 +313,12 @@ public class LibroGUIController {
     @FXML
     private void handleOrdinamento() {
         String criterio = sortCriteria.getValue();
-        // prendo i dati correnti dalla tabella
-        List<Libro> lista = new ArrayList<>(libriList);
-
-        Comparator<Libro> comp;
-        switch (criterio) {
-            case "Titolo ↓":
-                comp = Comparator.comparing(Libro::getTitolo, String.CASE_INSENSITIVE_ORDER).reversed();
-                break;
-            case "Titolo ↑":
-                comp = Comparator.comparing(Libro::getTitolo, String.CASE_INSENSITIVE_ORDER);
-                break;
-            case "Autore ↓":
-                comp = Comparator.comparing(Libro::getAutore, String.CASE_INSENSITIVE_ORDER).reversed();
-                break;
-            case "Autore ↑":
-                comp = Comparator.comparing(Libro::getAutore, String.CASE_INSENSITIVE_ORDER);
-                break;
-            case "Valutazione ↓":
-                comp = Comparator.comparingInt(Libro::getValutazione).reversed();
-                break;
-            case "Valutazione ↑":
-            default:
-                comp = Comparator.comparingInt(Libro::getValutazione);
-                break;
+        IOrdinamentoStrategy strategy = sortStrategies.get(criterio);
+        if (strategy != null) {
+            List<Libro> current = new ArrayList<>(libriList);
+            List<Libro> sorted = strategy.applica(current);
+            libriList.setAll(sorted);
         }
-
-        // ordino e aggiorno la lista
-        List<Libro> ordinata = lista.stream()
-                .sorted(comp)
-                .collect(Collectors.toList());
-        libriList.setAll(ordinata);
     }
 
 
@@ -416,11 +387,9 @@ public class LibroGUIController {
 
     @FXML
     private void handleUndo() {
-        // 1) Esegui restore in memoria
         caretaker.undo();
         List<Libro> previous = originator.getState();
 
-        // 2) Trova differenza: quali ID sono stati tolti
         List<Libro> currentDb = controller.gestisciElencoLibri();
         for (Libro l : currentDb) {
             if (previous.stream().noneMatch(p -> p.getId().equals(l.getId()))) {
@@ -429,7 +398,6 @@ public class LibroGUIController {
             }
         }
 
-        // 3) Aggiorna GUI
         libriList.setAll(previous);
     }
 

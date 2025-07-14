@@ -14,7 +14,6 @@ public class TestDB {
             System.out.println(" Connessione fallita.");
         }
 
-        // Facoltativo: chiusura della connessione
         DatabaseSingleton.INSTANCE.closeConnection();
     }
 }

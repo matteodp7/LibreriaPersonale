@@ -26,7 +26,6 @@ public class LibroServiceTest {
     void testAggiungiLibro_conIsbnDuplicato() {
         Libro libro = new Libro("Titolo", "Autore", "Genere", "ISBN123", StatoLettura.LETTO, 5, "https://foto.jpg");
 
-        // Simula che esiste già un libro con questo ISBN
         when(mockRepo.esistePerIsbn("ISBN123")).thenReturn(true);
 
         boolean risultato = service.aggiungiLibro(libro);

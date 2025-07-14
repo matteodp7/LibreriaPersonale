@@ -20,7 +20,6 @@
                 <Button text="Aggiungi" onAction="#handleAggiungi"/>
                 <Button text="Modifica" onAction="#handleModifica"/>
                 <Button text="Elimina" onAction="#handleElimina"/>
-                <!-- Nel tuo file libro_view.fxml, al posto dei quattro Button -->
                 <MenuButton fx:id="menuJsonCsv" text="Importa/Esporta" layoutX="10" layoutY="10">
                     <items>
                         <MenuItem fx:id="miImportaCSV" text="Importa CSV" onAction="#handleImportaCSV"/>
@@ -33,7 +32,6 @@
 
             </ToolBar>
 
-            <!-- Filtro -->
             <HBox spacing="10" alignment="CENTER_LEFT">
                 <Label text="Titolo:"/>
                 <TextField fx:id="filterTitolo" promptText="Filtra per titolo"/>
@@ -50,7 +48,6 @@
                     <items>
                         <FXCollections fx:factory="observableArrayList">
                             <String fx:value="Tutti"/>
-                            <!-- I valori dell’enum verranno caricati dinamicamente in controller -->
                         </FXCollections>
                     </items>
                 </ComboBox>
@@ -91,7 +88,6 @@
     <center>
         <TableView fx:id="tabellaLibri">
             <columns>
-                <!-- Nuova colonna per la copertina -->
                 <TableColumn fx:id="colCopertina" text="Copertina" prefWidth="80"/>
 
                 <TableColumn fx:id="colTitolo" text="Titolo" prefWidth="200"/>

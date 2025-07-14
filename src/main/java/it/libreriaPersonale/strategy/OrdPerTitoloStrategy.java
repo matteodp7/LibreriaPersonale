@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OrdPerTitoloStrategyI implements IOrdinamentoStrategy {
+public class OrdPerTitoloStrategy implements IOrdinamentoStrategy {
 
     @Override
     public List<Libro> applica(List<Libro> input) {

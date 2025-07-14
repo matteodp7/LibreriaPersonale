@@ -23,8 +23,7 @@ public class CSVImporter {
             while ((line = br.readLine()) != null) {
                 String[] campi = line.split(",");
 
-                // Assumiamo l’ordine colonne:
-                // id,titolo,autore,genere,isbn,statolettura,valutazione,copertinaUrl
+
                 String isbn = campi[4].trim();
 
                 if (libroRepository.esistePerIsbn(isbn)) {
@@ -37,7 +36,6 @@ public class CSVImporter {
                 libro.setGenere(campi[3].trim());
                 libro.setIsbn(isbn);
 
-                // Converte la stringa in enum StatoLettura
                 String statoStr = campi[5].trim();
                 try {
                     StatoLettura statoEnum = StatoLettura.valueOf(statoStr);

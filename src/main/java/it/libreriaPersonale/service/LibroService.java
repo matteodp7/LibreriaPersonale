@@ -51,9 +51,7 @@ public class LibroService {
         return libroRepository.cercaPerTitoloOAutore(query);
     }
 
-    /**
-     * Filtra i libri per stato di lettura (enum).
-     */
+
     public List<Libro> filtraPerStato(StatoLettura stato) {
         return libroRepository.filtraPerStato(stato);
     }

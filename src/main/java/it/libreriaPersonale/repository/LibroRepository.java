@@ -114,9 +114,7 @@ public class LibroRepository {
         }
     }
 
-    /**
-     * Ora accetta l'enum StatoLettura, non String.
-     */
+
     public List<Libro> filtraPerStato(StatoLettura stato) {
         EntityManager em = emf.createEntityManager();
         try {
