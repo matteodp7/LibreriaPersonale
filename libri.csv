@@ -1,6 +1,7 @@
 id,titolo,autore,genere,isbn,statolettura,valutazione,copertinaUrl
 42,Il secondo tragico libro di Fantozzi,Paolo Villaggio,Romanzo,9-75443-6533-34,DA_LEGGERE,3,https://m.media-amazon.com/images/I/91fN61KPf7L._AC_UF1000 1000_QL80_.jpg
-38,L'uomo sbagliato - Il caso Barillà,Stefano Zurlo,Giornalistico,9-335-7976-22,LETTO,2,https://www.ibs.it/images/9788839713643_0_0_0_0_0.jpg
+38,L'uomo sbagliato - Il caso Barillà,Stefano Zurlo,Giornalistico,9-335-7976-22,LETTO,3,https://www.ibs.it/images/9788839713643_0_0_0_0_0.jpg
+88,La coscienza di Zeno,Italo Svevo,Romanzo,9-4567-876-22,DA_LEGGERE,4,https://upload.wikimedia.org/wikipedia/commons/2/2d/Svevo_-_La_coscienza_di_Zeno%2C_Milano_1930_%28cover%29.jpg
 40,Harry Potter e la Camera dei Segreti,J.K. Rowling,Fantasy,9-4536-732-33,LETTO,4,https://www.salani.it/libri/harry-potter-e-la-camera-dei-segreti-9788867155965/image_preview
 39,Harry Potter e la Pietra Filosofale,J.K. Rowling,Fantasy,9-85424-754-7,LETTO,4,https://www.lafeltrinelli.it/images/9788867158126_0_0_536_0_75.jpg
 37,Le Tigri di Mompracem,Emilio Salgari,Avventura,9-4432-5257-34,DA_LEGGERE,4,https://upload.wikimedia.org/wikipedia/commons/5/53/Tigri_1900.jpg

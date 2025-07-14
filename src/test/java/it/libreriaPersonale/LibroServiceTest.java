@@ -1,7 +1,6 @@
 package it.libreriaPersonale;
 
 import it.libreriaPersonale.model.Libro;
-import it.libreriaPersonale.dao.LibroDAO;
 import it.libreriaPersonale.model.StatoLettura;
 import it.libreriaPersonale.repository.LibroRepository;
 import it.libreriaPersonale.service.LibroService;

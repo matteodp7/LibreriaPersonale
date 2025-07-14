@@ -24,7 +24,7 @@ public class EsempioMain {
         Scanner scanner = new Scanner(System.in);
         boolean continua = true;
 
-        System.out.println("📚 Benvenuto nella Libreria Personale!");
+        System.out.println("Benvenuto nella Libreria Personale!");
 
         while (continua) {
             System.out.println("\nCosa vuoi fare?");
@@ -43,7 +43,7 @@ public class EsempioMain {
 
             switch (scelta) {
                 case "1":
-                    System.out.println("\n📝 Inserisci i dati del libro:");
+                    System.out.println("\n Inserisci i dati del libro:");
                     System.out.print("Titolo: ");
                     String titolo = scanner.nextLine();
                     System.out.print("Autore: ");
@@ -60,7 +60,7 @@ public class EsempioMain {
                     try {
                         statoEnum = StatoLettura.valueOf(statoInput);
                     } catch (IllegalArgumentException e) {
-                        System.out.println("⚠️ Valore non valido, imposto di default NON_LETTO.");
+                        System.out.println(" Valore non valido, imposto di default NON_LETTO.");
                         statoEnum = StatoLettura.DA_LEGGERE;
                     }
 
@@ -69,11 +69,11 @@ public class EsempioMain {
                     try {
                         valutazione = Integer.parseInt(scanner.nextLine());
                         if (valutazione < 1 || valutazione > 5) {
-                            System.out.println("⚠️ Valore fuori range, imposto di default 1.");
+                            System.out.println(" Valore fuori range, imposto di default 1.");
                             valutazione = 1;
                         }
                     } catch (NumberFormatException e) {
-                        System.out.println("⚠️ Input non valido, imposto di default 1.");
+                        System.out.println(" Input non valido, imposto di default 1.");
                         valutazione = 1;
                     }
 
@@ -90,13 +90,13 @@ public class EsempioMain {
 
                 case "2":
                     List<Libro> libri = controller.gestisciElencoLibri();
-                    System.out.println("\n📚 Elenco libri salvati:");
+                    System.out.println("\n Elenco libri salvati:");
                     for (Libro libro : libri) {
                         System.out.println("- [" + libro.getId() + "] " +
                                 libro.getTitolo() +
                                 " di " + libro.getAutore() +
                                 " (" + libro.getStatoLettura().name() +
-                                ", ⭐ " + libro.getValutazione() + ")");
+                                ", VAL. " + libro.getValutazione() + ")");
                         if (libro.getCopertinaUrl() != null) {
                             System.out.println("    Copertina: " + libro.getCopertinaUrl());
                         }
@@ -104,12 +104,12 @@ public class EsempioMain {
                     break;
 
                 case "3":
-                    System.out.print("📝 Inserisci l'ID del libro da aggiornare: ");
+                    System.out.print(" Inserisci l'ID del libro da aggiornare: ");
                     Long updateId;
                     try {
                         updateId = Long.parseLong(scanner.nextLine());
                     } catch (NumberFormatException e) {
-                        System.out.println("❌ ID non valido.");
+                        System.out.println(" ID non valido.");
                         break;
                     }
 
@@ -119,11 +119,11 @@ public class EsempioMain {
                             .orElse(null);
 
                     if (esistente == null) {
-                        System.out.println("❌ Nessun libro trovato con questo ID.");
+                        System.out.println(" Nessun libro trovato con questo ID.");
                         break;
                     }
 
-                    System.out.println("✏️ Lascia vuoto un campo se non vuoi modificarlo.");
+                    System.out.println(" Lascia vuoto un campo se non vuoi modificarlo.");
 
                     System.out.print("Nuovo titolo (attuale: " + esistente.getTitolo() + "): ");
                     String nuovoTitolo = scanner.nextLine();
@@ -148,7 +148,7 @@ public class EsempioMain {
                         try {
                             esistente.setStatoLettura(StatoLettura.valueOf(nuovoStatoInput));
                         } catch (IllegalArgumentException e) {
-                            System.out.println("⚠️ Stato non valido, mantengo quello attuale.");
+                            System.out.println(" Stato non valido, mantengo quello attuale.");
                         }
                     }
 
@@ -160,10 +160,10 @@ public class EsempioMain {
                             if (valInt >= 1 && valInt <= 5) {
                                 esistente.setValutazione(valInt);
                             } else {
-                                System.out.println("⚠️ Valutazione fuori range, mantengo attuale.");
+                                System.out.println(" Valutazione fuori range, mantengo attuale.");
                             }
                         } catch (NumberFormatException e) {
-                            System.out.println("⚠️ Input non valido, mantengo valutazione attuale.");
+                            System.out.println(" Input non valido, mantengo valutazione attuale.");
                         }
                     }
 
@@ -179,11 +179,11 @@ public class EsempioMain {
 
                 case "4":
                     List<Libro> libriAutore = controller.gestisciLibriOrdinatiPerAutore();
-                    System.out.println("\n📚 Libri ordinati per autore:");
+                    System.out.println("\n Libri ordinati per autore:");
                     for (Libro libro : libriAutore) {
                         System.out.println("- [" + libro.getId() + "] " +
                                 libro.getAutore() + " - " + libro.getTitolo() +
-                                " (" + libro.getStatoLettura().name() + ", ⭐ " + libro.getValutazione() + ")");
+                                " (" + libro.getStatoLettura().name() + ", VAL. " + libro.getValutazione() + ")");
                         if (libro.getCopertinaUrl() != null) {
                             System.out.println("    Copertina: " + libro.getCopertinaUrl());
                         }
@@ -196,25 +196,25 @@ public class EsempioMain {
                     try {
                         id = Long.parseLong(scanner.nextLine());
                     } catch (NumberFormatException e) {
-                        System.out.println("❌ ID non valido.");
+                        System.out.println(" ID non valido.");
                         break;
                     }
                     controller.gestisciEliminazioneLibro(id);
                     break;
 
                 case "6":
-                    System.out.print("🔍 Inserisci parola chiave per titolo o autore: ");
+                    System.out.print(" Inserisci parola chiave per titolo o autore: ");
                     String query = scanner.nextLine();
                     List<Libro> risultati = controller.gestisciRicerca(query);
 
                     if (risultati.isEmpty()) {
-                        System.out.println("🔎 Nessun risultato trovato.");
+                        System.out.println(" Nessun risultato trovato.");
                     } else {
-                        System.out.println("🔎 Risultati della ricerca:");
+                        System.out.println(" Risultati della ricerca:");
                         for (Libro libro : risultati) {
                             System.out.println("- [" + libro.getId() + "] " +
                                     libro.getTitolo() + " di " + libro.getAutore() +
-                                    " (" + libro.getStatoLettura().name() + ", ⭐ " + libro.getValutazione() + ")");
+                                    " (" + libro.getStatoLettura().name() + ", VAL. " + libro.getValutazione() + ")");
                             if (libro.getCopertinaUrl() != null) {
                                 System.out.println("    Copertina: " + libro.getCopertinaUrl());
                             }
@@ -223,20 +223,20 @@ public class EsempioMain {
                     break;
 
                 case "7":
-                    System.out.print("📖 Inserisci stato di lettura (NON_LETTO, IN_LETTURA, LETTO): ");
+                    System.out.print(" Inserisci stato di lettura (NON_LETTO, IN_LETTURA, LETTO): ");
                     String stato2Input = scanner.nextLine().trim().toUpperCase();
                     StatoLettura stato2;
                     try {
                         stato2 = StatoLettura.valueOf(stato2Input);
                     } catch (IllegalArgumentException e) {
-                        System.out.println("❌ Stato non valido, torni al menu.");
+                        System.out.println(" Stato non valido, torni al menu.");
                         break;
                     }
                     List<Libro> perStato = controller.gestisciFiltroPerStato(stato2);
                     if (perStato.isEmpty()) {
-                        System.out.println("❌ Nessun libro trovato con questo stato.");
+                        System.out.println(" Nessun libro trovato con questo stato.");
                     } else {
-                        System.out.println("📚 Libri trovati:");
+                        System.out.println(" Libri trovati:");
                         for (Libro libro : perStato) {
                             System.out.println("- [" + libro.getId() + "] " +
                                     libro.getTitolo() + " (" + libro.getStatoLettura().name() + ")");
@@ -248,26 +248,26 @@ public class EsempioMain {
                     break;
 
                 case "8":
-                    System.out.print("⭐ Inserisci valutazione minima (1-5): ");
+                    System.out.print(" Inserisci valutazione minima (1-5): ");
                     int minValutazione;
                     try {
                         minValutazione = Integer.parseInt(scanner.nextLine());
                         if (minValutazione < 1 || minValutazione > 5) {
-                            System.out.println("❌ Valutazione fuori range.");
+                            System.out.println(" Valutazione fuori range.");
                             break;
                         }
                     } catch (NumberFormatException e) {
-                        System.out.println("❌ Input non valido.");
+                        System.out.println(" Input non valido.");
                         break;
                     }
                     List<Libro> perValutazione = controller.gestisciFiltroPerValutazione(minValutazione);
                     if (perValutazione.isEmpty()) {
-                        System.out.println("❌ Nessun libro con valutazione ≥ " + minValutazione);
+                        System.out.println(" Nessun libro con valutazione ≥ " + minValutazione);
                     } else {
-                        System.out.println("⭐ Libri trovati:");
+                        System.out.println(" Libri trovati:");
                         for (Libro libro : perValutazione) {
                             System.out.println("- [" + libro.getId() + "] " +
-                                    libro.getTitolo() + " (⭐ " + libro.getValutazione() + ")");
+                                    libro.getTitolo() + " (VAL. " + libro.getValutazione() + ")");
                             if (libro.getCopertinaUrl() != null) {
                                 System.out.println("    Copertina: " + libro.getCopertinaUrl());
                             }
@@ -276,19 +276,18 @@ public class EsempioMain {
                     break;
 
                 case "0":
-                    // ✅ Salva in CSV prima di uscire
                     List<Libro> tuttiLibri = controller.gestisciElencoLibri();
                     CSVExporter.esporta(tuttiLibri, "libri.csv");
                     continua = false;
                     break;
 
                 default:
-                    System.out.println("❌ Scelta non valida. Riprova.");
+                    System.out.println(" Scelta non valida. Riprova.");
             }
         }
 
         scanner.close();
         controller.chiudiRisorse();
-        System.out.println("\n👋 Arrivederci!");
+        System.out.println("\n Arrivederci!");
     }
 }

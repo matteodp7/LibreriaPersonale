@@ -14,8 +14,17 @@
     "genere": "Giornalistico",
     "isbn": "9-335-7976-22",
     "statolettura": "LETTO",
-    "valutazione": 2,
+    "valutazione": 3,
     "copertinaUrl": "https://www.ibs.it/images/9788839713643_0_0_0_0_0.jpg"
+  },
+  {
+    "titolo": "La coscienza di Zeno",
+    "autore": "Italo Svevo",
+    "genere": "Romanzo",
+    "isbn": "9-4567-876-22",
+    "statolettura": "DA_LEGGERE",
+    "valutazione": 4,
+    "copertinaUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Svevo_-_La_coscienza_di_Zeno%2C_Milano_1930_%28cover%29.jpg"
   },
   {
     "titolo": "Harry Potter e la Camera dei Segreti",

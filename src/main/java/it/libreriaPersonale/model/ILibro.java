@@ -1,6 +1,5 @@
 package it.libreriaPersonale.model;
 
-import it.libreriaPersonale.model.StatoLettura;
 
 public interface ILibro {
     Long getId();
