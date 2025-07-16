@@ -4,10 +4,10 @@ import it.libreriaPersonale.model.Libro;
 import java.util.Collections;
 import java.util.List;
 
-public class ReverseStrategy implements IOrdinamentoStrategy {
+public class OrdInversoStrategy implements IOrdinamentoStrategy {
     private final IOrdinamentoStrategy base;
 
-    public ReverseStrategy(IOrdinamentoStrategy base) {
+    public OrdInversoStrategy(IOrdinamentoStrategy base) {
         this.base = base;
     }
 

@@ -24,7 +24,6 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class LibroGUIController {
 
@@ -131,10 +130,10 @@ public class LibroGUIController {
         filterValutazione.getSelectionModel().select(0);
 
         sortStrategies.put("Titolo ↑",  new OrdPerTitoloStrategy());
-        sortStrategies.put("Titolo ↓",  new ReverseStrategy(new OrdPerTitoloStrategy()));
+        sortStrategies.put("Titolo ↓",  new OrdInversoStrategy(new OrdPerTitoloStrategy()));
         sortStrategies.put("Autore ↑",  new OrdPerAutoreStrategy());
-        sortStrategies.put("Autore ↓",  new ReverseStrategy(new OrdPerAutoreStrategy()));
-        sortStrategies.put("Valutazione ↑", new ReverseStrategy(new OrdPerValutazioneStrategy())); // oppure:
+        sortStrategies.put("Autore ↓",  new OrdInversoStrategy(new OrdPerAutoreStrategy()));
+        sortStrategies.put("Valutazione ↑", new OrdInversoStrategy(new OrdPerValutazioneStrategy())); // oppure:
         sortStrategies.put("Valutazione ↓", new OrdPerValutazioneStrategy());
 
         sortCriteria.setItems(FXCollections.observableArrayList(sortStrategies.keySet()));
