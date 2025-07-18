@@ -11,7 +11,7 @@ public class OrdPerValutazioneStrategy implements IOrdinamentoStrategy {
     @Override
     public List<Libro> applica(List<Libro> input) {
         return input.stream()
-                .sorted(Comparator.comparingInt(Libro::getValutazione).reversed())
+                .sorted(Comparator.comparingInt(Libro::getValutazione))
                 .collect(Collectors.toList());
     }
 

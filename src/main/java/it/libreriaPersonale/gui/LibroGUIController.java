@@ -133,8 +133,8 @@ public class LibroGUIController {
         sortStrategies.put("Titolo ↓",  new OrdInversoStrategy(new OrdPerTitoloStrategy()));
         sortStrategies.put("Autore ↑",  new OrdPerAutoreStrategy());
         sortStrategies.put("Autore ↓",  new OrdInversoStrategy(new OrdPerAutoreStrategy()));
-        sortStrategies.put("Valutazione ↑", new OrdInversoStrategy(new OrdPerValutazioneStrategy())); // oppure:
-        sortStrategies.put("Valutazione ↓", new OrdPerValutazioneStrategy());
+        sortStrategies.put("Valutazione ↑", new OrdPerValutazioneStrategy());
+        sortStrategies.put("Valutazione ↓", new OrdInversoStrategy(new OrdPerValutazioneStrategy()));
 
         sortCriteria.setItems(FXCollections.observableArrayList(sortStrategies.keySet()));
         sortCriteria.getSelectionModel().selectFirst();
