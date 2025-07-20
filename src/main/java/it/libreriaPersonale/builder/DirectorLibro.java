@@ -11,15 +11,6 @@ public class DirectorLibro {
         this.builder = builder;
     }
 
-    public Libro costruisciLibroBase(String titolo, String autore, String isbn) {
-        return builder
-                .setTitolo(titolo)
-                .setAutore(autore)
-                .setIsbn(isbn)
-                .setStatoLettura(StatoLettura.DA_LEGGERE)
-                .setValutazione(0)
-                .build();
-    }
 
     public Libro costruisciLibroCompleto(String titolo, String autore, String genere,
                                          String isbn, StatoLettura stato, int valutazione, String url) {

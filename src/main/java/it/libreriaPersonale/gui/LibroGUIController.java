@@ -129,12 +129,12 @@ public class LibroGUIController {
         filterValutazione.setItems(FXCollections.observableArrayList(0,1,2,3,4,5));
         filterValutazione.getSelectionModel().select(0);
 
-        sortStrategies.put("Titolo ↑",  new OrdPerTitoloStrategy());
-        sortStrategies.put("Titolo ↓",  new OrdInversoStrategy(new OrdPerTitoloStrategy()));
-        sortStrategies.put("Autore ↑",  new OrdPerAutoreStrategy());
-        sortStrategies.put("Autore ↓",  new OrdInversoStrategy(new OrdPerAutoreStrategy()));
-        sortStrategies.put("Valutazione ↑", new OrdPerValutazioneStrategy());
-        sortStrategies.put("Valutazione ↓", new OrdInversoStrategy(new OrdPerValutazioneStrategy()));
+        sortStrategies.put("Titolo A-Z",  new OrdPerTitoloStrategy());
+        sortStrategies.put("Titolo Z-A",  new OrdInversoStrategy(new OrdPerTitoloStrategy()));
+        sortStrategies.put("Autore A-Z",  new OrdPerAutoreStrategy());
+        sortStrategies.put("Autore Z-A",  new OrdInversoStrategy(new OrdPerAutoreStrategy()));
+        sortStrategies.put("Valutazione 1-5", new OrdPerValutazioneStrategy());
+        sortStrategies.put("Valutazione 5-1", new OrdInversoStrategy(new OrdPerValutazioneStrategy()));
 
         sortCriteria.setItems(FXCollections.observableArrayList(sortStrategies.keySet()));
         sortCriteria.getSelectionModel().selectFirst();
@@ -327,7 +327,7 @@ public class LibroGUIController {
             CSVExporter.esporta(controller.gestisciElencoLibri(), "libri.csv");
             mostraAlertInfo("Esportazione completata!");
         } catch (Exception e) {
-            mostraAlertWarning("Errore export: " + e.getMessage());
+            mostraAlertWarning("Errore esportazione: " + e.getMessage());
         }
     }
 
@@ -340,7 +340,7 @@ public class LibroGUIController {
             caretaker.doAction(libriList);
             mostraAlertInfo("Importazione completata!");
         } catch (Exception e) {
-            mostraAlertWarning("Errore import: " + e.getMessage());
+            mostraAlertWarning("Errore importazione: " + e.getMessage());
         }
     }
 

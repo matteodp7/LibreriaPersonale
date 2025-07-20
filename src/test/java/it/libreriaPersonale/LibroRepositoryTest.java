@@ -43,8 +43,8 @@ public class LibroRepositoryTest {
     void testPersistAndFindLibro() {
         Libro libro = new Libro("1984", "Orwell", "Distopia", "1234567890", StatoLettura.DA_LEGGERE, 5, "https://foto.jpg");
         em.persist(libro);
-        em.flush(); // Forza l'inserimento nel DB
-        em.clear(); // Svuota cache per simulare nuova richiesta
+        em.flush();
+        em.clear();
 
         Libro found = em.find(Libro.class, libro.getId());
 

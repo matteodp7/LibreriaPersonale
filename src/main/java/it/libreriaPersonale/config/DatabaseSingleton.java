@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 import java.util.Properties;
 
 public enum DatabaseSingleton {
-    INSTANCE;  // unica istanza singleton
+    INSTANCE;
 
     private Connection connection;
 
